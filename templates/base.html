@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Jutia{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">🛍️ <span>Jutia</span></a>
+    <nav class="links">
+      <a href="/">الرئيسية</a>
+      <a href="/shop">المتجر</a>
+      <a href="/games" class="hot">🎁 العب واربح</a>
+    </nav>
+    <div class="actions">
+      <a href="/cart" class="cart-btn">🛒 <span id="cartBadge">0</span></a>
+      {% if session.uid %}
+        <span class="user">👤 {{ session.name }}</span>
+        {% if session.is_admin %}<a href="/admin" class="btn-sm">لوحة</a>{% endif %}
+        <a href="/logout" class="btn-sm ghost">خروج</a>
+      {% else %}
+        <a href="/login" class="btn-sm">دخول</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{% with msgs = get_flashed_messages(with_categories=true) %}
+  {% if msgs %}
+  <div class="flashes">
+    {% for cat, m in msgs %}
+      <div class="flash {{ cat }}">{{ m }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="footer">
+  <div>
+    <b>🛍️ Jutia</b> — متجرك الإلكتروني الأول
+    <br><small>© 2026 كل الحقوق محفوظة</small>
+  </div>
+</footer>
+
+<script src="/static/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

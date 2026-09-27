@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ p.name }}{% endblock %}
+{% block content %}
+
+<div class="pd">
+  <div class="big-img">{{ p.image }}</div>
+  <div>
+    <h1>{{ p.name }}</h1>
+    <div class="rating">⭐ {{ p.rating }} / 5</div>
+    <div class="price-big">
+      {{ p.price }} د.م
+      {% if p.old_price %}<s>{{ p.old_price }} د.م</s>{% endif %}
+    </div>
+    <p class="desc">{{ p.description }}</p>
+
+    <div class="qty">
+      <button onclick="decQty()">−</button>
+      <span id="qty">1</span>
+      <button onclick="incQty()">+</button>
+    </div>
+
+    <button class="btn primary" onclick="addProduct()">🛒 أضف إلى السلة</button>
+    <a href="/cart" class="btn ghost">اذهب للسلة</a>
+
+    <div style="margin-top:20px;color:var(--muted);font-size:14px">
+      ✅ ضمان الإرجاع خلال 7 أيام<br>
+      🚚 توصيل سريع لجميع المدن<br>
+      🔒 دفع آمن عند التسليم
+    </div>
+  </div>
+</div>
+
+{% if related %}
+<h2 class="section-title">منتجات مشابهة</h2>
+<div class="grid">
+  {% for r in related %}
+    <div class="pcard">
+      <a href="/product/{{ r.id }}" class="img">{{ r.image }}</a>
+      <div class="body">
+        <h3><a href="/product/{{ r.id }}">{{ r.name }}</a></h3>
+        <div class="price"><b>{{ r.price }} د.م</b></div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<script>
+let qty = 1;
+function incQty(){ qty++; document.getElementById("qty").textContent = qty; }
+function decQty(){ if(qty>1){ qty--; document.getElementById("qty").textContent = qty; } }
+function addProduct(){ addToCart({{ p.id }}, qty); }
+</script>
+
+{% endblock %}

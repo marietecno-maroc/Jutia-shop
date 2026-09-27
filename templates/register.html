@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}تسجيل{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h2>✨ حساب جديد</h2>
+  <form method="post">
+    <div class="field"><label>الاسم</label><input name="name" required></div>
+    <div class="field"><label>البريد</label><input name="email" type="email" required></div>
+    <div class="field"><label>الهاتف</label><input name="phone"></div>
+    <div class="field"><label>كلمة المرور</label>
+      <input name="password" type="password" required></div>
+    <button class="btn primary" type="submit">إنشاء الحساب</button>
+  </form>
+</div>
+{% endblock %}

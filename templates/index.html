@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Jutia — الرئيسية{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <h1>تسوّق بذكاء، العب واربح 🎁</h1>
+  <p>اكتشف أفضل المنتجات بأسعار لا تُقاوَم، والعَب ألعابنا الممتعة للفوز بتخفيضات تصل إلى 50%</p>
+  <div class="cta">
+    <a href="/shop" class="btn primary">🛍️ ابدأ التسوق</a>
+    <a href="/games" class="btn ghost">🎡 العب واربح</a>
+  </div>
+</section>
+
+<h2 class="section-title">الفئات</h2>
+<div class="cats">
+  {% for c in categories %}
+    <a href="/shop?cat={{ c.id }}" class="cat">
+      <span class="ico">{{ c.icon }}</span>{{ c.name }}
+    </a>
+  {% endfor %}
+</div>
+
+<h2 class="section-title">منتجات مميزة</h2>
+<div class="grid">
+  {% for p in products %}
+    <div class="pcard">
+      {% if p.old_price and p.old_price > p.price %}
+        <div class="badge">-{{ ((p.old_price - p.price) / p.old_price * 100) | round | int }}%</div>
+      {% endif %}
+      <a href="/product/{{ p.id }}" class="img">{{ p.image }}</a>
+      <div class="body">
+        <h3><a href="/product/{{ p.id }}">{{ p.name }}</a></h3>
+        <div class="rating">⭐ {{ p.rating }}</div>
+        <div class="price">
+          <b>{{ p.price }} د.م</b>
+          {% if p.old_price %}<s>{{ p.old_price }} د.م</s>{% endif %}
+        </div>
+        <button class="add" onclick="addToCart({{ p.id }})">🛒 أضف للسلة</button>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

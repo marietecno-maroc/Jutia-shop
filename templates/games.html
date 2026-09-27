@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block title %}العب واربح{% endblock %}
+{% block content %}
+
+<h2 class="section-title">🎁 العب واربح تخفيضات</h2>
+
+<div class="games-grid">
+
+  <!-- 1. عجلة الحظ -->
+  <div class="game-card">
+    <div class="icon">🎡</div>
+    <h3>عجلة الحظ</h3>
+    <p>أدر العجلة واربح حتى 50% تخفيض</p>
+
+    <div class="wheel-wrap">
+      <div class="pointer">▼</div>
+      <div class="wheel" id="wheel">
+        <div class="slice" style="transform:rotate(0deg)"><span>0%</span></div>
+        <div class="slice" style="transform:rotate(45deg)"><span>5%</span></div>
+        <div class="slice" style="transform:rotate(90deg)"><span>10%</span></div>
+        <div class="slice" style="transform:rotate(135deg)"><span>15%</span></div>
+        <div class="slice" style="transform:rotate(180deg)"><span>20%</span></div>
+        <div class="slice" style="transform:rotate(225deg)"><span>30%</span></div>
+        <div class="slice" style="transform:rotate(270deg)"><span>50%</span></div>
+        <div class="slice" style="transform:rotate(315deg)"><span>مجاني</span></div>
+        <div class="wheel-center">🎯</div>
+      </div>
+    </div>
+
+    <button class="btn primary" id="spinBtn" onclick="spinWheel()">
+      🎡 أدر العجلة
+    </button>
+    <div id="spinResult"></div>
+  </div>
+
+  <!-- 2. بطاقة الحظ -->
+  <div class="game-card">
+    <div class="icon">🎫</div>
+    <h3>بطاقة الحظ</h3>
+    <p>اخدش البطاقة واكشف جائزتك</p>
+
+    <div class="scratch-box" id="scratchBox">
+      <div id="scratchPrize">؟</div>
+      <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+    </div>
+
+    <button class="btn primary" id="scratchBtn" onclick="newScratch()">
+      🎫 بطاقة جديدة
+    </button>
+    <div id="scratchResult"></div>
+  </div>
+
+  <!-- 3. لعبة الأسئلة -->
+  <div class="game-card">
+    <div class="icon">🧠</div>
+    <h3>تحدي المعرفة</h3>
+    <p>أجب على 5 أسئلة واربح تخفيضًا</p>
+
+    <div id="quizArea">
+      <button class="btn primary" onclick="startQuiz()">🚀 ابدأ التحدي</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============ عجلة الحظ ============
+let spinning = false;
+async function spinWheel() {
+  if (spinning) return;
+  spinning = true;
+  const r = await api("/api/spin", {});
+  const wheel = document.getElementById("wheel");
+  const sliceAngle = 360 / 8;
+  const targetAngle = 360 * 5 + (360 - (r.index * sliceAngle + sliceAngle / 2));
+  wheel.style.transform = `rotate(${targetAngle}deg)`;
+  setTimeout(() => {
+    let html = "";
+    if (r.percent > 0) {
+      html = `<div class="coupon">
+        <div class="code">${r.code}</div>
+        <div class="pct">🎉 ربحت ${r.percent}% تخفيض!</div>
+      </div>`;
+    } else {
+      html = `<div style="color:var(--muted);margin-top:12px">😅 حظ أوفر! أعد المحاولة</div>`;
+    }
+    document.getElementById("spinResult").innerHTML = html;
+    spinning = false;
+  }, 4200);
+}
+
+// ============ بطاقة الحظ ============
+let canvas, ctx, isDrawing = false, scratchReward = null;
+
+async function newScratch() {
+  const r = await api("/api/scratch", {});
+  scratchReward = r;
+  document.getElementById("scratchResult").innerHTML = "";
+  const box = document.getElementById("scratchBox");
+  box.innerHTML = `
+    <div id="scratchPrize" style="font-size:44px;font-weight:900">${r.percent}%</div>
+    <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+  `;
+  initCanvas();
+  document.getElementById("scratchBtn").disabled = true;
+  setTimeout(() => { document.getElementById("scratchBtn").disabled = false; }, 3000);
+}
+
+function initCanvas() {
+  canvas = document.getElementById("scratchCanvas");
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#a78bfa";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 20px Cairo";
+  ctx.textAlign = "center";
+  ctx.fillText("اخدش هنا 👆", canvas.width / 2, canvas.height / 2 + 7);
+  ctx.globalCompositeOperation = "destination-out";
+  canvas.addEventListener("mousedown", () => isDrawing = true);
+  canvas.addEventListener("mouseup", () => isDrawing = false);
+  canvas.addEventListener("mousemove", draw);
+  canvas.addEventListener("touchstart", e => { isDrawing = true; e.preventDefault(); });
+  canvas.addEventListener("touchend", () => isDrawing = false);
+  canvas.addEventListener("touchmove", e => {
+    const t = e.touches[0];
+    draw({ clientX: t.clientX, clientY: t.clientY });
+    e.preventDefault();
+  });
+}
+
+function draw(e) {
+  if (!isDrawing) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  ctx.beginPath();
+  ctx.arc(x, y, 22, 0, Math.PI * 2);
+  ctx.fill();
+  checkScratch();
+}
+
+function checkScratch() {
+  const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  let cleared = 0;
+  for (let i = 3; i < img.data.length; i += 4) if (img.data[i] === 0) cleared++;
+  if (cleared / (img.data.length / 4) > 0.5 && scratchReward) {
+    isDrawing = false;
+    document.getElementById("scratchResult").innerHTML = `
+      <div class="coupon">
+        <div class="code">${scratchReward.code}</div>
+        <div class="pct">🎉 ربحت ${scratchReward.percent}% تخفيض!</div>
+      </div>`;
+    scratchReward = null;
+  }
+}
+
+// ============ لعبة الأسئلة ============
+const quizQuestions = [
+  { q: "ما عاصمة المغرب؟", a: ["الرباط","الدار البيضاء","مراكش","فاس"], c: 0 },
+  { q: "كم عدد أيام السنة الميلادية؟", a: ["360","365","370","350"], c: 1 },
+  { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", a: ["الأرض","زحل","المشتري","المريخ"], c: 2 },
+  { q: "من مؤلف رواية البؤساء؟", a: ["فيكتور هوغو","تولستوي","نجيب محفوظ","دوستويفسكي"], c: 0 },
+  { q: "ما أطول نهر في العالم؟", a: ["النيل","الأمازون","الفرات","دجلة"], c: 0 },
+];
+
+let quizState = { i: 0, score: 0 };
+
+function startQuiz() {
+  quizState = { i: 0, score: 0 };
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const area = document.getElementById("quizArea");
+  if (quizState.i >= quizQuestions.length) {
+    finishQuiz();
+    return;
+  }
+  const q = quizQuestions[quizState.i];
+  area.innerHTML = `
+    <p style="color:var(--muted);font-size:14px">سؤال ${quizState.i + 1} / ${quizQuestions.length}</p>
+    <h4 style="margin:10px 0 16px">${q.q}</h4>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${q.a.map((opt, idx) =>
+        `<button class="btn ghost" onclick="answerQuiz(${idx})" style="padding:10px">${opt}</button>`
+      ).join("")}
+    </div>
+  `;
+}
+
+function answerQuiz(idx) {
+  const q = quizQuestions[quizState.i];
+  if (idx === q.c) quizState.score++;
+  quizState.i++;
+  renderQuiz();
+}
+
+async function finishQuiz() {
+  const area = document.getElementById("quizArea");
+  const r = await api("/api/quiz", { score: quizState.score, total: quizQuestions.length });
+  area.innerHTML = `
+    <div style="font-size:44px;margin:10px 0">${quizState.score >= 3 ? "🏆" : "💪"}</div>
+    <h4>نتيجتك: ${quizState.score} / ${quizQuestions.length}</h4>
+    <div class="coupon" style="margin-top:14px">
+      <div class="code">${r.code}</div>
+      <div class="pct">🎁 ربحت ${r.percent}% تخفيض!</div>
+    </div>
+    <button class="btn ghost" style="margin-top:14px" onclick="startQuiz()">🔄 إعادة</button>
+  `;
+}
+
+// تهيئة أولى
+document.addEventListener("DOMContentLoaded", () => {
+  initCanvas();
+  newScratch();
+});
+</script>
+
+{% endblock %}

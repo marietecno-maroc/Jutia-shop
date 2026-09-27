@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}المتجر{% endblock %}
+{% block content %}
+
+<h2 class="section-title">كل المنتجات</h2>
+
+<form method="get" style="margin-bottom:20px;display:flex;gap:10px">
+  <input name="q" value="{{ q }}" placeholder="ابحث عن منتج..."
+    style="flex:1;padding:14px;border-radius:14px;border:1px solid var(--line);
+           background:rgba(255,255,255,.04);color:#fff;font-family:inherit">
+  <button class="btn primary" type="submit">🔍 بحث</button>
+</form>
+
+<div class="cats">
+  <a href="/shop" class="cat {% if not current_cat %}active{% endif %}">
+    <span class="ico">🌐</span>الكل
+  </a>
+  {% for c in categories %}
+    <a href="/shop?cat={{ c.id }}" class="cat {% if current_cat == c.id|string %}active{% endif %}">
+      <span class="ico">{{ c.icon }}</span>{{ c.name }}
+    </a>
+  {% endfor %}
+</div>
+
+<div class="grid">
+  {% for p in products %}
+    <div class="pcard">
+      {% if p.old_price and p.old_price > p.price %}
+        <div class="badge">-{{ ((p.old_price - p.price) / p.old_price * 100) | round | int }}%</div>
+      {% endif %}
+      <a href="/product/{{ p.id }}" class="img">{{ p.image }}</a>
+      <div class="body">
+        <h3><a href="/product/{{ p.id }}">{{ p.name }}</a></h3>
+        <div class="rating">⭐ {{ p.rating }}</div>
+        <div class="price">
+          <b>{{ p.price }} د.م</b>
+          {% if p.old_price %}<s>{{ p.old_price }} د.م</s>{% endif %}
+        </div>
+        <button class="add" onclick="addToCart({{ p.id }})">🛒 أضف للسلة</button>
+      </div>
+    </div>
+  {% else %}
+    <p style="color:var(--muted)">لا توجد منتجات مطابقة</p>
+  {% endfor %}
+</div>
+
+{% endblock %}

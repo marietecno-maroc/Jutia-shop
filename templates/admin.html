@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}لوحة التحكم{% endblock %}
+{% block content %}
+
+<h2 class="section-title">👑 لوحة التحكم</h2>
+
+<div class="stats">
+  <div class="stat"><div class="n">{{ stats.products }}</div><div class="l">منتج</div></div>
+  <div class="stat"><div class="n">{{ stats.orders }}</div><div class="l">طلب</div></div>
+  <div class="stat"><div class="n">{{ stats.users }}</div><div class="l">مستخدم</div></div>
+  <div class="stat"><div class="n">{{ stats.revenue|round(0)|int }}</div><div class="l">المبيعات (د.م)</div></div>
+</div>
+
+<h3 class="section-title">➕ إضافة منتج</h3>
+<div class="form-card" style="max-width:100%;margin:0 0 30px">
+  <form method="post" action="/admin/product/add">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field"><label>الاسم</label><input name="name" required></div>
+      <div class="field"><label>الأيقونة (إيموجي)</label><input name="image" value="🛍️"></div>
+      <div class="field"><label>السعر</label><input name="price" type="number" step="0.01" required></div>
+      <div class="field"><label>السعر القديم</label><input name="old_price" type="number" step="0.01"></div>
+      <div class="field"><label>المخزون</label><input name="stock" type="number" value="100"></div>
+      <div class="field"><label>الفئة (ID)</label><input name="category_id" type="number" value="1"></div>
+    </div>
+    <div class="field"><label>الوصف</label>
+      <textarea name="description" rows="2"></textarea></div>
+    <button class="btn primary" type="submit">إضافة المنتج</button>
+  </form>
+</div>
+
+<h3 class="section-title">📦 الطلبات</h3>
+<table class="table">
+  <thead><tr>
+    <th>#</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th><th></th>
+  </tr></thead>
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td>#{{ o.id }}</td>
+      <td>{{ o.customer_name }}</td>
+      <td>{{ o.phone }}</td>
+      <td><b>{{ o.total|round(2) }}</b> د.م</td>
+      <td>
+        <span class="badge-status
+          {% if o.status=='جديد' %}s-new{% elif o.status=='تم الشحن' %}s-ship{% else %}s-done{% endif %}">
+          {{ o.status }}
+        </span>
+      </td>
+      <td><small>{{ o.created_at }}</small></td>
+      <td>
+        <form method="post" action="/admin/order/{{ o.id }}/status" style="display:flex;gap:6px">
+          <select name="status" style="padding:6px;border-radius:8px;
+            background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--line)">
+            <option>جديد</option><option>تم الشحن</option><option>تم التسليم</option>
+          </select>
+          <button class="btn-sm" type="submit">حفظ</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3 class="section-title">🛍️ المنتجات</h3>
+<table class="table">
+  <thead><tr><th>#</th><th></th><th>الاسم</th><th>السعر</th><th>المخزون</th><th></th></tr></thead>
+  <tbody>
+    {% for p in products %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td style="font-size:28px">{{ p.image }}</td>
+      <td>{{ p.name }}</td>
+      <td>{{ p.price }} د.م</td>
+      <td>{{ p.stock }}</td>
+      <td>
+        <form method="post" action="/admin/product/delete/{{ p.id }}"
+              onsubmit="return confirm('حذف المنتج؟')">
+          <button class="btn-sm" style="background:#ef4444">حذف</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}السلة{% endblock %}
+{% block content %}
+
+<h2 class="section-title">🛒 سلة التسوق</h2>
+
+{% if items %}
+  {% for it in items %}
+    <div class="cart-row">
+      <div class="imini">{{ it.image }}</div>
+      <div>
+        <b>{{ it.name }}</b><br>
+        <small style="color:var(--muted)">{{ it.price }} د.م</small>
+      </div>
+      <div class="qty">
+        <button onclick="updateQty({{ it.id }}, {{ it.qty - 1 }})">−</button>
+        <span>{{ it.qty }}</span>
+        <button onclick="updateQty({{ it.id }}, {{ it.qty + 1 }})">+</button>
+      </div>
+      <div><b>{{ it.subtotal }} د.م</b></div>
+    </div>
+  {% endfor %}
+
+  <div class="cart-total">
+    <div>المجموع</div>
+    <div class="big">{{ total }} د.م</div>
+    <a href="/checkout" class="btn primary">إتمام الشراء →</a>
+  </div>
+{% else %}
+  <div class="success-box">
+    <div class="tick">🛒</div>
+    <h2>سلتك فارغة</h2>
+    <a href="/shop" class="btn primary">تصفح المنتجات</a>
+  </div>
+{% endif %}
+
+{% endblock %}

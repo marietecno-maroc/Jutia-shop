@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}تم الطلب{% endblock %}
+{% block content %}
+
+<div class="success-box pop">
+  <div class="tick">✅</div>
+  <h2>تم استلام طلبك بنجاح!</h2>
+  <p style="color:var(--muted)">سنتواصل معك قريبًا لتأكيد التوصيل</p>
+
+  <div class="oid">رقم الطلب: #{{ o.id }}</div>
+
+  <div style="text-align:right;background:rgba(255,255,255,.04);
+              padding:16px;border-radius:14px;margin:16px 0">
+    {% for it in items %}
+      <div>{{ it.name }} × {{ it.qty }} = {{ it.price * it.qty }} د.م</div>
+    {% endfor %}
+    {% if o.discount > 0 %}
+      <div style="color:#4ade80">🎁 خصم: -{{ o.discount|round(2) }} د.م</div>
+    {% endif %}
+    <hr style="border-color:var(--line);margin:10px 0">
+    <div><b>الإجمالي: {{ o.total|round(2) }} د.م</b></div>
+  </div>
+
+  <a href="/shop" class="btn primary">مواصلة التسوق</a>
+</div>
+
+{% endblock %}
