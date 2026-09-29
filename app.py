@@ -471,9 +471,12 @@ def admin_order_status(oid):
     return redirect(url_for("admin"))
 
 
+
+
 # ============ تشغيل ============
 if __name__ == "__main__":
     init_db()
-    print("🛍️  Jutia: http://127.0.0.1:5000")
-    print("👑  Admin:    admin@shop.com / admin123")
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    print("Jutia متجر")
+    print("Admin: admin@shop.com / admin123")
+    port = int(os.environ.get("PORT", 7860))
+    app.run(host="0.0.0.0", port=port, debug=False)
