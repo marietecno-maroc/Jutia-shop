@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}اتصل بنا{% endblock %}
+{% block content %}
+<div style="max-width:700px;margin:auto">
+<h1 style="text-align:center;font-size:32px;color:#a78bfa;margin-bottom:24px">📞 اتصل بنا</h1>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px">
+<a href="https://wa.me/212600000000" target="_blank" style="text-decoration:none;color:inherit">
+<div style="padding:20px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:36px">💬</div>
+<div style="font-weight:700;color:#25d366;margin-top:6px">واتساب</div>
+</div></a>
+<div style="padding:20px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:36px">📧</div>
+<div style="font-weight:700;color:#a78bfa;margin-top:6px">contact@jutia.com</div>
+</div>
+<div style="padding:20px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:36px">📍</div>
+<div style="font-weight:700;color:#f4d03f;margin-top:6px">المغرب</div>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px">
+<h2 style="font-size:18px;color:#a78bfa;margin-bottom:14px">📨 أرسل رسالة</h2>
+<div class="field"><label>الاسم</label><input></div>
+<div class="field"><label>البريد الإلكتروني</label><input type="email"></div>
+<div class="field"><label>الرسالة</label><textarea rows="4"></textarea></div>
+<button class="btn primary" style="width:100%">📤 إرسال</button>
+</div>
+<div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px">
+<h2 style="font-size:18px;color:#a78bfa;margin-bottom:14px">🕐 ساعات العمل</h2>
+<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span>الاثنين - الجمعة</span><b style="color:#22c55e">9:00 - 20:00</b></div>
+<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span>السبت</span><b style="color:#22c55e">10:00 - 18:00</b></div>
+<div style="display:flex;justify-content:space-between;padding:6px 0"><span>الأحد</span><b style="color:#f59e0b">واتساب فقط</b></div>
+</div>
+<div style="text-align:center;margin-top:20px"><a href="/" class="btn primary">← الرئيسية</a></div>
+</div>
+{% endblock %}

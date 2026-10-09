@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}سجّل كتاجر — Jutia{% endblock %}
+{% block content %}
+<div class="form-card" style="max-width:520px">
+<h2>🏪 انضم كتاجر</h2>
+<p style="text-align:center;color:var(--muted);margin-bottom:20px">سجّل مجاناً وابدأ ببيع منتجاتك المستعملة</p>
+<form method="post">
+<div class="field"><label>الاسم الكامل *</label><input name="name" required></div>
+<div class="field"><label>اسم المتجر *</label><input name="shop_name" required placeholder="مثال: متجر الأناقة"></div>
+<div class="field"><label>البريد الإلكتروني *</label><input name="email" type="email" required></div>
+<div class="field"><label>كلمة المرور *</label><input name="password" type="password" required minlength="6"></div>
+<div class="field"><label>رقم الهاتف *</label><input name="phone" required placeholder="06XXXXXXXX"></div>
+<div class="field"><label>المدينة</label><input name="city" placeholder="الدار البيضاء"></div>
+<div class="field"><label>نبذة عنك (اختياري)</label><textarea name="bio" rows="3"></textarea></div>
+<button class="btn primary" type="submit">إنشاء الحساب</button>
+</form>
+<p style="text-align:center;margin-top:16px;color:var(--muted)">
+عندك حساب؟ <a href="/sell/login" style="color:#a78bfa">سجّل الدخول</a>
+</p>
+</div>
+{% endblock %}

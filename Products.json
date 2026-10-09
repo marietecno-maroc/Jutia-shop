@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Air Max TN Full Black",
+    "price": "499 درهم",
+    "size": "40-45",
+    "stock": 15,
+    "photo": "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    "desc": "TN نوار كامل، أوريجينال و خفيفة بزاف"
+  },
+  {
+    "name": "Jordan 4 Retro White",
+    "price": "650 درهم",
+    "size": "40-44",
+    "stock": 8,
+    "photo": "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa",
+    "desc": "جودة ممتازة، كتجي بالباط ديالها"
+  },
+  {
+    "name": "Nike Dunk Low Panda",
+    "price": "450 درهم",
+    "size": "40-45",
+    "stock": 20,
+    "photo": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a",
+    "desc": "الأكثر طلبا، أبيض و أسود"
+  },
+  {
+    "name": "New Balance 550 Green",
+    "price": "599 درهم",
+    "size": "41-44",
+    "stock": 6,
+    "photo": "https://images.unsplash.com/photo-1608231387042-66d1773070a",
+    "desc": "موديل جديد 2024، ستايل نقي"
+  }
+]

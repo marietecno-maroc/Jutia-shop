@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}البروفايل{% endblock %}
+{% block content %}
+<div class="form-card" style="max-width:520px">
+<a href="/sell/dashboard" class="btn-sm">← لوحة التاجر</a>
+<h2 style="margin-top:16px">⚙️ بيانات المتجر</h2>
+<form method="post">
+<div class="field"><label>الاسم الكامل</label><input name="name" value="{{ seller.name }}" required></div>
+<div class="field"><label>اسم المتجر</label><input name="shop_name" value="{{ seller.shop_name or '' }}"></div>
+<div class="field"><label>رقم الهاتف</label><input name="phone" value="{{ seller.phone or '' }}"></div>
+<div class="field"><label>المدينة</label><input name="city" value="{{ seller.city or '' }}"></div>
+<div class="field"><label>نبذة عن المتجر</label><textarea name="bio" rows="4">{{ seller.bio or '' }}</textarea></div>
+<button class="btn primary" type="submit">💾 حفظ</button>
+</form>
+<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px">
+📧 {{ seller.email }}<br>
+📅 عضو منذ: {{ seller.created_at[:10] }}
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}لوحة التاجر{% endblock %}
+{% block content %}
+
+<h2 class="section-title">🏪 {{ seller.shop_name or seller.name }}</h2>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+<a href="/sell/product/add" class="btn-sm" style="background:#22c55e">➕ إضافة منتج</a>
+<a href="/sell/messages" class="btn-sm">💬 الرسائل</a>
+<a href="/sell/profile" class="btn-sm">⚙️ البروفايل</a>
+<a href="/marketplace" class="btn-sm" style="background:#06b6d4">🛍️ السوق</a>
+<a href="/sell/logout" class="btn-sm" style="background:#ef4444">🚪 خروج</a>
+</div>
+
+<div class="stats" style="margin-bottom:24px">
+<div class="stat"><div class="n">{{ stats.products }}</div><div class="l">منتج</div></div>
+<div class="stat"><div class="n">{{ stats.available }}</div><div class="l">متوفر</div></div>
+<div class="stat"><div class="n">{{ stats.messages }}</div><div class="l">رسالة</div></div>
+<div class="stat"><div class="n">{{ stats.unread }}</div><div class="l">غير مقروءة</div></div>
+</div>
+
+{% if recent_messages %}
+<div style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);border-radius:14px;padding:16px;margin-bottom:20px">
+<h3 style="margin-bottom:12px;font-size:16px">🔔 آخر الرسائل</h3>
+{% for m in recent_messages %}
+<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center">
+<div>
+<b>{{ m.sender_name }}</b>
+<small style="color:var(--muted)"> · {{ m.sender_phone }}</small>
+<div style="font-size:12px;color:var(--muted)">{{ m.message[:60] }}...</div>
+</div>
+<a href="/sell/message/{{ m.id }}" class="btn-sm">فتح</a>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+<h3 class="section-title">📦 منتجاتي</h3>
+{% if products %}
+<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+{% for p in products %}
+<div class="pcard">
+{% if p.image1 %}
+<div class="img" style="padding:0"><img src="/static/uploads/{{ p.image1 }}" style="width:100%;height:180px;object-fit:cover"></div>
+{% else %}
+<div class="img" style="font-size:60px">📦</div>
+{% endif %}
+<div class="body">
+<h3>{{ p.name }}</h3>
+<div style="font-size:12px;color:var(--muted)">{{ p.condition_type }} · {{ p.city or '-' }}</div>
+<div class="price"><b>{{ p.price }} د.م</b></div>
+<div style="font-size:11px;color:var(--muted)">👁️ {{ p.views }} مشاهدة</div>
+<div style="display:flex;gap:6px;margin-top:8px">
+<a href="/sell/product/edit/{{ p.id }}" class="btn-sm" style="background:#0ea5e9;flex:1;text-align:center">✏️</a>
+<form method="post" action="/sell/product/delete/{{ p.id }}" onsubmit="return confirm('حذف؟')" style="flex:1">
+<button class="btn-sm" style="background:#ef4444;width:100%">🗑️</button>
+</form>
+</div>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:40px;background:rgba(255,255,255,0.03);border-radius:16px">
+<p style="color:var(--muted);margin-bottom:16px">ما عندكش منتجات بعد</p>
+<a href="/sell/product/add" class="btn primary">➕ أضف أول منتج</a>
+</div>
+{% endif %}
+
+{% endblock %}

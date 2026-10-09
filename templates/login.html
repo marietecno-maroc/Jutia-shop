@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}دخول{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h2>👤 تسجيل الدخول</h2>
+  <form method="post">
+    <div class="field"><label>البريد الإلكتروني</label>
+      <input name="email" type="email" required></div>
+    <div class="field"><label>كلمة المرور</label>
+      <input name="password" type="password" required></div>
+    <button class="btn primary" type="submit">دخول</button>
+  </form>
+  <p style="text-align:center;margin-top:16px;color:var(--muted)">
+    ليس لديك حساب؟ <a href="/register" style="color:#a78bfa">سجّل الآن</a>
+  </p>
+</div>
+{% endblock %}

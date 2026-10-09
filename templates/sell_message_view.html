@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}رسالة{% endblock %}
+{% block content %}
+<div class="form-card" style="max-width:600px">
+<a href="/sell/messages" class="btn-sm">← الرسائل</a>
+<h2 style="margin-top:16px">💬 رسالة من {{ m.sender_name }}</h2>
+<div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;margin:16px 0">
+<div style="margin-bottom:8px"><b>📞 الهاتف:</b> {{ m.sender_phone }}</div>
+{% if m.sender_email %}<div style="margin-bottom:8px"><b>📧 الإيميل:</b> {{ m.sender_email }}</div>{% endif %}
+<div style="margin-bottom:8px"><b>📅 التاريخ:</b> {{ m.created_at[:16] }}</div>
+{% if m.product_name %}<div style="margin-bottom:8px"><b>📦 بخصوص:</b> {{ m.product_name }}</div>{% endif %}
+</div>
+<div style="background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(236,72,153,0.1));border-radius:12px;padding:20px;margin:16px 0">
+<p style="font-size:16px;line-height:1.9;color:#e2e8f0;white-space:pre-wrap">{{ m.message }}</p>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<a href="https://wa.me/{{ m.sender_phone|replace(' ','')|replace('+','') }}" target="_blank" class="btn primary" style="flex:1;text-align:center">💬 رد على واتساب</a>
+{% if m.pid %}<a href="/marketplace/product/{{ m.pid }}" class="btn ghost" style="flex:1;text-align:center">📦 المنتج</a>{% endif %}
+</div>
+</div>
+{% endblock %}

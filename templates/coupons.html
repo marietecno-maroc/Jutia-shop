@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Coupons{% endblock %}
+{% block content %}
+<h2 class="section-title">Coupons</h2>
+<div style="margin-bottom:16px"><a href="/admin" class="btn-sm">Back to Admin</a></div>
+<div class="form-card" style="max-width:100%">
+<h3 style="margin-bottom:16px">Add Coupon</h3>
+<form method="post" action="/admin/coupon/add" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
+<div><label>Code</label><input name="code" required placeholder="SUMMER20"></div>
+<div><label>Percent %</label><input name="percent" type="number" value="10" min="1" max="90"></div>
+<div><label>Max Uses</label><input name="max_uses" type="number" value="1" min="1"></div>
+<button class="btn primary" type="submit">Add</button>
+</form>
+</div>
+<table class="table" style="margin-top:20px">
+<tr><th>#</th><th>Code</th><th>Discount</th><th>Used</th><th>Max</th><th>Action</th></tr>
+{% for c in coupons %}
+<tr>
+<td>{{ c.id }}</td>
+<td><b>{{ c.code }}</b></td>
+<td>{{ c.percent }}%</td>
+<td>{{ c.used }}</td>
+<td>{{ c.max_uses }}</td>
+<td>
+<form method="post" action="/admin/coupon/delete/{{ c.id }}" onsubmit="return confirm('Delete?')">
+<button class="btn-sm" style="background:#ef4444">Delete</button>
+</form>
+</td>
+</tr>
+{% else %}
+<tr><td colspan="6" style="text-align:center;color:var(--muted)">No coupons yet</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

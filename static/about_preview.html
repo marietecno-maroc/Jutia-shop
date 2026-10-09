@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jutia — من نحن</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Cairo,sans-serif;background:#f8f4ec;color:#1a1a2e;min-height:100vh;overflow-x:hidden}
+
+/* ═══════════════════ HERO — قوس مغربي + زليج ═══════════════════ */
+.hero{
+  position:relative;
+  padding:60px 20px 100px;
+  text-align:center;
+  overflow:hidden;
+  background:#0e1a2e;
+  min-height:640px;
+}
+
+/* الزليج الفاسي — نمط حقيقي من نجوم 16 و8 رؤوس */
+.zellige-bg{
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><defs><pattern id='fes' x='0' y='0' width='120' height='120' patternUnits='userSpaceOnUse'><rect width='120' height='120' fill='%231e5fa8'/><g transform='translate(60,60)'><polygon points='0,-48 18,-18 48,0 18,18 0,48 -18,18 -48,0 -18,-18' fill='%23f8f4ec'/><polygon points='0,-36 13,-13 36,0 13,13 0,36 -13,13 -36,0 -13,-13' fill='%23c9a227'/><polygon points='0,-26 10,-10 26,0 10,10 0,26 -10,10 -26,0 -10,-10' fill='%2327ae60'/><polygon points='0,-16 6,-6 16,0 6,6 0,16 -6,6 -16,0 -6,-6' fill='%23c0392b'/><circle r='4' fill='%23f8f4ec'/></g><g transform='translate(0,0)'><polygon points='0,-22 8,-8 22,0 8,8 0,22 -8,8 -22,0 -8,-8' fill='%23f8f4ec'/><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%23c9a227'/></g><g transform='translate(120,0)'><polygon points='0,-22 8,-8 22,0 8,8 0,22 -8,8 -22,0 -8,-8' fill='%23f8f4ec'/><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%23c9a227'/></g><g transform='translate(0,120)'><polygon points='0,-22 8,-8 22,0 8,8 0,22 -8,8 -22,0 -8,-8' fill='%23f8f4ec'/><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%23c9a227'/></g><g transform='translate(120,120)'><polygon points='0,-22 8,-8 22,0 8,8 0,22 -8,8 -22,0 -8,-8' fill='%23f8f4ec'/><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%23c9a227'/></g><g transform='translate(0,60)'><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%2327ae60'/></g><g transform='translate(120,60)'><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%2327ae60'/></g><g transform='translate(60,0)'><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%23c0392b'/></g><g transform='translate(60,120)'><polygon points='0,-14 5,-5 14,0 5,5 0,14 -5,5 -14,0 -5,-5' fill='%23c0392b'/></g></pattern></defs><rect width='240' height='240' fill='url(%23fes)'/></svg>");
+  background-size:240px 240px;
+  opacity:0.9;
+}
+
+/* طبقة تعتيم مركزي */
+.zellige-shade{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(14,26,46,0.45) 0%,rgba(14,26,46,0.7) 30%,rgba(14,26,46,0.92) 65%,rgba(14,26,46,0.97) 100%);
+}
+
+/* ═════ القوس المغربي العظيم ═════ */
+.arch-container{
+  position:relative;
+  z-index:5;
+  width:280px;
+  height:400px;
+  margin:0 auto 30px;
+  filter:drop-shadow(0 20px 50px rgba(201,162,39,0.4));
+}
+
+.arch-svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* هالة ذهبية متحركة */
+.arch-container::before{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(201,162,39,0.3) 0%,transparent 60%);
+  animation:haloPulse 4s ease-in-out infinite;
+  pointer-events:none;
+  z-index:-1;
+}
+@keyframes haloPulse{
+  0%,100%{opacity:0.6;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.1)}
+}
+
+/* ═════ العنوان ═════ */
+.hero-content{
+  position:relative;
+  z-index:5;
+}
+
+.title{
+  font-family:Amiri,serif;
+  font-size:clamp(48px,10vw,72px);
+  font-weight:700;
+  background:linear-gradient(180deg,#f4d03f 0%,#c9a227 50%,#8b6914 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  letter-spacing:6px;
+  margin:0 0 12px;
+  line-height:1;
+  text-shadow:0 0 60px rgba(201,162,39,0.5);
+  position:relative;
+}
+
+.title::after{
+  content:"";
+  display:block;
+  width:140px;
+  height:2px;
+  margin:22px auto 0;
+  background:linear-gradient(90deg,transparent,#c9a227 50%,transparent);
+}
+
+.subtitle{
+  font-size:13px;
+  color:#c9a227;
+  letter-spacing:10px;
+  text-transform:uppercase;
+  margin-top:22px;
+  font-weight:600;
+  opacity:0.9;
+}
+
+/* ═══════════════════ MAIN ═══════════════════ */
+.main{
+  max-width:860px;
+  margin:0 auto;
+  padding:0 20px;
+  position:relative;
+  z-index:10;
+  margin-top:-60px;
+}
+
+/* فاصل زليج */
+.divider{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  margin:50px 0;
+}
+.divider-line{
+  height:1px;
+  flex:1;
+  max-width:110px;
+  background:linear-gradient(90deg,transparent,#c9a227,transparent);
+}
+.divider-symbol{
+  width:36px;
+  height:36px;
+}
+.divider-symbol svg{width:100%;height:100%}
+
+/* ═════ البطاقات ═════ */
+.card{
+  background:#fff;
+  border-radius:4px;
+  padding:48px 40px;
+  margin-bottom:28px;
+  position:relative;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.04),
+    0 12px 40px rgba(30,58,95,0.08);
+  border-top:4px solid #1e5fa8;
+  overflow:hidden;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  top:4px;right:0;left:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,#c9a227 50%,transparent);
+}
+.card::after{
+  content:"";
+  position:absolute;
+  top:14px;right:14px;
+  width:44px;height:44px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'><polygon points='22,4 27,15 38,22 27,29 22,40 17,29 6,22 17,15' fill='%23c9a227' opacity='0.12'/></svg>");
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+
+.card-label{
+  display:inline-block;
+  padding:6px 18px;
+  background:linear-gradient(135deg,#1e5fa8,#144a82);
+  color:#fff;
+  font-size:11px;
+  letter-spacing:4px;
+  font-weight:700;
+  border-radius:2px;
+  margin-bottom:20px;
+  text-transform:uppercase;
+}
+
+.card-title{
+  font-family:Amiri,serif;
+  font-size:32px;
+  color:#1a3a6e;
+  font-weight:700;
+  margin-bottom:24px;
+  line-height:1.3;
+}
+
+.card-text{
+  font-size:16px;
+  color:#3a3a4a;
+  line-height:2.1;
+  margin-bottom:14px;
+}
+.card-text strong{color:#1e5fa8;font-weight:700}
+.card-text em{color:#c0392b;font-style:normal;font-weight:600}
+
+/* ═════ القيم ═════ */
+.values{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-top:32px;
+}
+.value{
+  padding:32px 24px;
+  text-align:center;
+  border:1px solid #e8e0d0;
+  border-radius:2px;
+  transition:all 0.4s;
+  position:relative;
+  background:#fdfbf7;
+}
+.value::before{
+  content:"";
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:40px;height:3px;
+  background:#c9a227;
+}
+.value::after{
+  content:"";
+  position:absolute;
+  bottom:0;left:50%;
+  transform:translateX(-50%);
+  width:0;height:3px;
+  background:#1e5fa8;
+  transition:width 0.4s;
+}
+.value:hover{
+  border-color:#c9a227;
+  background:#fff;
+  box-shadow:0 15px 40px rgba(201,162,39,0.15);
+  transform:translateY(-4px);
+}
+.value:hover::after{width:80%}
+
+.value-icon{
+  font-size:42px;
+  display:block;
+  margin-bottom:18px;
+}
+.value-name{
+  font-family:Amiri,serif;
+  font-size:22px;
+  color:#1a3a6e;
+  font-weight:700;
+  margin-bottom:10px;
+}
+.value-desc{
+  font-size:13px;
+  color:#6b7280;
+  line-height:1.7;
+}
+
+/* ═════ الأرقام ═════ */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-top:32px;
+}
+.stat{
+  text-align:center;
+  padding:34px 12px;
+  border-radius:2px;
+  position:relative;
+  overflow:hidden;
+  color:#fff;
+}
+.stat::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><polygon points='25,6 31,19 44,25 31,31 25,44 19,31 6,25 19,19' fill='none' stroke='rgba(255,255,255,0.15)' stroke-width='0.6'/></svg>");
+  background-size:50px 50px;
+}
+.stat.s1{background:linear-gradient(160deg,#1e5fa8,#0e3a6e)}
+.stat.s2{background:linear-gradient(160deg,#27ae60,#145a32)}
+.stat.s3{background:linear-gradient(160deg,#c0392b,#7b241c)}
+.stat-num{
+  font-family:Amiri,serif;
+  font-size:44px;
+  font-weight:700;
+  display:block;
+  line-height:1;
+  position:relative;
+  z-index:2;
+  color:#f4d03f;
+  text-shadow:0 2px 20px rgba(0,0,0,0.3);
+}
+.stat-lbl{
+  font-size:12px;
+  color:rgba(255,255,255,0.95);
+  margin-top:14px;
+  position:relative;
+  z-index:2;
+  letter-spacing:3px;
+  font-weight:600;
+}
+
+/* ═════ CTA ═════ */
+.cta{
+  text-align:center;
+  padding:70px 20px;
+  background:linear-gradient(160deg,#1a3a6e 0%,#0e2a52 100%);
+  margin-top:40px;
+  position:relative;
+  overflow:hidden;
+}
+.cta::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><g transform='translate(50,50)'><polygon points='0,-40 10,-15 40,0 10,15 0,40 -10,15 -40,0 -10,-15' fill='none' stroke='rgba(201,162,39,0.15)' stroke-width='0.8'/><polygon points='0,-25 6,-10 25,0 6,10 0,25 -6,10 -25,0 -6,-10' fill='none' stroke='rgba(201,162,39,0.1)' stroke-width='0.5'/></g></svg>");
+  background-size:100px 100px;
+}
+.cta-title{
+  font-family:Amiri,serif;
+  font-size:34px;
+  color:#f8f4ec;
+  margin-bottom:28px;
+  position:relative;
+  z-index:2;
+}
+.cta-title span{color:#c9a227}
+.btn-group{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  flex-wrap:wrap;
+  position:relative;
+  z-index:2;
+}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 38px;
+  border-radius:2px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:15px;
+  transition:all 0.3s;
+  letter-spacing:1px;
+  border:2px solid transparent;
+}
+.btn-primary{
+  background:#c9a227;
+  color:#1a3a6e;
+}
+.btn-primary:hover{background:#f4d03f;transform:translateY(-3px);box-shadow:0 10px 25px rgba(201,162,39,0.4)}
+.btn-outline{
+  background:transparent;
+  color:#f8f4ec;
+  border-color:rgba(201,162,39,0.5);
+}
+.btn-outline:hover{
+  border-color:#c9a227;
+  background:rgba(201,162,39,0.1);
+  transform:translateY(-3px);
+}
+
+/* ═════ FOOTER ═════ */
+.footer{
+  text-align:center;
+  padding:44px 20px;
+  background:#0a1a30;
+  color:#8ba0b8;
+  font-size:13px;
+  position:relative;
+}
+.footer::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:6px;
+  background:repeating-linear-gradient(90deg,#1e5fa8 0,#1e5fa8 20px,#c9a227 20px,#c9a227 40px,#27ae60 40px,#27ae60 60px,#c0392b 60px,#c0392b 80px);
+}
+.footer-brand{
+  font-family:Amiri,serif;
+  font-size:28px;
+  color:#c9a227;
+  letter-spacing:8px;
+  margin-bottom:14px;
+}
+.footer-symbols{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:20px 0;
+}
+.footer-symbols span{
+  width:12px;height:12px;
+  transform:rotate(45deg);
+  display:inline-block;
+}
+.footer-symbols span:nth-child(1){background:#c9a227}
+.footer-symbols span:nth-child(2){background:#1e5fa8}
+.footer-symbols span:nth-child(3){background:#27ae60}
+.footer-symbols span:nth-child(4){background:#c0392b}
+.footer-symbols span:nth-child(5){background:#f4d03f}
+
+/* موبايل */
+@media(max-width:640px){
+  .card{padding:32px 22px}
+  .card-title{font-size:26px}
+  .card-text{font-size:15px}
+  .stats{grid-template-columns:1fr;gap:12px}
+  .arch-container{width:220px;height:320px}
+  .title{font-size:52px;letter-spacing:3px}
+  .cta-title{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ HERO — الزليج + القوس ════════════ -->
+<section class="hero">
+  <div class="zellige-bg"></div>
+  <div class="zellige-shade"></div>
+
+  <div class="hero-content">
+
+    <!-- القوس المغربي مع الزليج -->
+    <div class="arch-container">
+      <svg class="arch-svg" viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- زليج داخل القوس -->
+          <pattern id="archZellige" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <rect width="40" height="40" fill="#1e5fa8"/>
+            <g transform="translate(20,20)">
+              <polygon points="0,-16 6,-6 16,0 6,6 0,16 -6,6 -16,0 -6,-6" fill="#f8f4ec"/>
+              <polygon points="0,-11 4,-4 11,0 4,4 0,11 -4,4 -11,0 -4,-4" fill="#c9a227"/>
+              <polygon points="0,-6 2,-2 6,0 2,2 0,6 -2,2 -6,0 -2,-2" fill="#27ae60"/>
+              <circle r="1.5" fill="#c0392b"/>
+            </g>
+          </pattern>
+
+          <!-- تدرج ذهبي للحدود -->
+          <linearGradient id="goldBorder" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f4d03f"/>
+            <stop offset="50%" stop-color="#c9a227"/>
+            <stop offset="100%" stop-color="#8b6914"/>
+          </linearGradient>
+
+          <!-- تدرج للقوس الخارجي -->
+          <linearGradient id="archGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2b78c5"/>
+            <stop offset="50%" stop-color="#1e5fa8"/>
+            <stop offset="100%" stop-color="#0e3a6e"/>
+          </linearGradient>
+
+          <!-- clipPath للقوس -->
+          <clipPath id="archClip">
+            <path d="M 60 380 L 60 160 Q 60 60 140 60 Q 220 60 220 160 L 220 380 Z"/>
+          </clipPath>
+        </defs>
+
+        <!-- الحدود الخارجية الذهبية (الإطار) -->
+        <rect x="20" y="40" width="240" height="360" rx="4"
+              fill="none" stroke="url(#goldBorder)" stroke-width="3"/>
+        <rect x="28" y="48" width="224" height="344" rx="2"
+              fill="none" stroke="url(#goldBorder)" stroke-width="1" opacity="0.6"/>
+
+        <!-- خلفية الإطار: زليج -->
+        <rect x="28" y="48" width="224" height="344" rx="2"
+              fill="url(#archZellige)" opacity="0.85"/>
+
+        <!-- القوس الداخلي بخلفية زليج أفتح -->
+        <path d="M 60 380 L 60 160 Q 60 60 140 60 Q 220 60 220 160 L 220 380 Z"
+              fill="#f8f4ec" opacity="0.15"/>
+
+        <!-- ملء القوس بزليج -->
+        <g clip-path="url(#archClip)">
+          <rect x="60" y="60" width="160" height="320" fill="url(#archZellige)" opacity="0.75"/>
+          <!-- تدرج داخلي -->
+          <rect x="60" y="60" width="160" height="320"
+                fill="url(#archGrad)" opacity="0.35"/>
+        </g>
+
+        <!-- حدود القوس الذهبية -->
+        <path d="M 60 380 L 60 160 Q 60 60 140 60 Q 220 60 220 160 L 220 380"
+              fill="none" stroke="url(#goldBorder)" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M 68 380 L 68 162 Q 68 68 140 68 Q 212 68 212 162 L 212 380"
+              fill="none" stroke="url(#goldBorder)" stroke-width="1.5" opacity="0.8"/>
+
+        <!-- نجمة ثمانية مركزية داخل القوس -->
+        <g transform="translate(140,220)">
+          <polygon points="0,-55 15,-15 55,0 15,15 0,55 -15,15 -55,0 -15,-15"
+                   fill="#c9a227" stroke="#f8f4ec" stroke-width="1.5"/>
+          <polygon points="0,-40 11,-11 40,0 11,11 0,40 -11,11 -40,0 -11,-11"
+                   fill="#f8f4ec" stroke="#1e5fa8" stroke-width="1.5"/>
+          <polygon points="0,-25 7,-7 25,0 7,7 0,25 -7,7 -25,0 -7,-7"
+                   fill="#27ae60" stroke="#fff" stroke-width="1"/>
+          <polygon points="0,-14 4,-4 14,0 4,4 0,14 -4,4 -14,0 -4,-4"
+                   fill="#c0392b"/>
+          <circle r="5" fill="#f4d03f" stroke="#1a3a6e" stroke-width="1.5"/>
+          <circle r="2" fill="#1a3a6e"/>
+        </g>
+
+        <!-- نجوم صغيرة في الزوايا -->
+        <g transform="translate(50,80)" opacity="0.9">
+          <polygon points="0,-10 3,-3 10,0 3,3 0,10 -3,3 -10,0 -3,-3" fill="#f4d03f"/>
+        </g>
+        <g transform="translate(230,80)" opacity="0.9">
+          <polygon points="0,-10 3,-3 10,0 3,3 0,10 -3,3 -10,0 -3,-3" fill="#f4d03f"/>
+        </g>
+        <g transform="translate(50,360)" opacity="0.9">
+          <polygon points="0,-10 3,-3 10,0 3,3 0,10 -3,3 -10,0 -3,-3" fill="#f4d03f"/>
+        </g>
+        <g transform="translate(230,360)" opacity="0.9">
+          <polygon points="0,-10 3,-3 10,0 3,3 0,10 -3,3 -10,0 -3,-3" fill="#f4d03f"/>
+        </g>
+      </svg>
+    </div>
+
+    <h1 class="title">من نحن</h1>
+    <p class="subtitle">JUTIA • أصالة مغربية</p>
+  </div>
+</section>
+
+<!-- ════════════ MAIN ════════════ -->
+<main class="main">
+
+  <!-- القصة -->
+  <article class="card" style="margin-top:30px">
+    <span class="card-label">قصتنا</span>
+    <h2 class="card-title">من قلب الجوطية إلى بيتك</h2>
+    <p class="card-text">
+      في قلب المغرب، ومن عبق الأسواق التقليدية حيث تتشابك <strong>الأصالة</strong> بالحداثة،
+      وُلدت <strong>Jutia</strong> — متجر إلكتروني مغربي يحمل في طياته روح الجوطية التقليدية
+      وقوة التجارة الرقمية.
+    </p>
+    <p class="card-text">
+      انطلقنا من سؤال بسيط: <em>لماذا لا نُقرّب المنتجات الجيدة من كل بيت مغربي بأسعار
+      في المتناول وخدمة راقية؟</em> ومن هنا بدأت رحلتنا في بناء متجر يفتخر به كل مغربي.
+    </p>
+  </article>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-symbol">
+      <svg viewBox="0 0 36 36"><polygon points="18,4 22,14 32,18 22,22 18,32 14,22 4,18 14,14" fill="#c9a227"/></svg>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- القيم -->
+  <article class="card">
+    <span class="card-label">قيمنا</span>
+    <h2 class="card-title">ما نؤمن به في Jutia</h2>
+
+    <div class="values">
+      <div class="value">
+        <span class="value-icon">🤝</span>
+        <div class="value-name">الثقة</div>
+        <div class="value-desc">نتعامل مع كل عميل بحال الجار، بشفافية وصدق.</div>
+      </div>
+      <div class="value">
+        <span class="value-icon">🚚</span>
+        <div class="value-name">التوصيل</div>
+        <div class="value-desc">خدمة توصيل لجميع المدن المغربية بأسرع وقت.</div>
+      </div>
+      <div class="value">
+        <span class="value-icon">💎</span>
+        <div class="value-name">الجودة</div>
+        <div class="value-desc">منتجات مختارة بعناية، تفوق انتظاراتك.</div>
+      </div>
+      <div class="value">
+        <span class="value-icon">🔒</span>
+        <div class="value-name">دفع آمن</div>
+        <div class="value-desc">الدفع عند التسليم في كل مكان بالمغرب.</div>
+      </div>
+    </div>
+  </article>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-symbol">
+      <svg viewBox="0 0 36 36"><polygon points="18,2 24,10 34,18 24,26 18,34 12,26 2,18 12,10" fill="#1e5fa8"/></svg>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- الأرقام -->
+  <article class="card">
+    <span class="card-label">أرقامنا</span>
+    <h2 class="card-title">Jutia في نظرة</h2>
+
+    <div class="stats">
+      <div class="stat s1">
+        <span class="stat-num">+100</span>
+        <div class="stat-lbl">منتج متوفر</div>
+      </div>
+      <div class="stat s2">
+        <span class="stat-num">24/7</span>
+        <div class="stat-lbl">خدمة العملاء</div>
+      </div>
+      <div class="stat s3">
+        <span class="stat-num">100%</span>
+        <div class="stat-lbl">ضمان الإرجاع</div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<!-- ════════════ CTA ════════════ -->
+<section class="cta">
+  <h2 class="cta-title">جاهز تكتشف <span>منتجاتنا</span>؟</h2>
+  <div class="btn-group">
+    <a href="/shop" class="btn btn-primary">🛍️ ابدأ التسوق</a>
+    <a href="/" class="btn btn-outline">💬 تواصل معنا</a>
+  </div>
+</section>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer class="footer">
+  <div class="footer-brand">JUTIA</div>
+  <div class="footer-symbols">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div>متجر مغربي أصيل © 2026</div>
+  <div style="margin-top:12px;color:#c9a227;font-size:12px;letter-spacing:2px">
+    صُنع بحب في المغرب 🇲🇦
+  </div>
+</footer>
+
+</body>
+</html>

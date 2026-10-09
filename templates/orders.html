@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<h2 class="section-title">Orders</h2>
+<div style="margin-bottom:16px"><a href="/admin" class="btn-sm">Back to Admin</a></div>
+<form method="get" style="display:grid;grid-template-columns:2fr 1fr auto;gap:10px;margin-bottom:20px">
+<input name="q" value="{{ q }}" placeholder="Search by name, phone, ID...">
+<select name="status">
+<option value="">All Status</option>
+<option value="new" {% if status=="new" %}selected{% endif %}>New</option>
+<option value="shipped" {% if status=="shipped" %}selected{% endif %}>Shipped</option>
+<option value="delivered" {% if status=="delivered" %}selected{% endif %}>Delivered</option>
+</select>
+<button class="btn primary" type="submit">Search</button>
+</form>
+<table class="table">
+<tr><th>#</th><th>Customer</th><th>Phone</th><th>Total</th><th>Status</th><th>Date</th><th></th></tr>
+{% for o in orders %}
+<tr>
+<td><a href="/admin/order/{{ o.id }}">#{{ o.id }}</a></td>
+<td>{{ o.customer_name }}</td>
+<td>{{ o.phone }}</td>
+<td><b>{{ o.total|round(2) }}</b> MAD</td>
+<td><span class="badge-status s-new">{{ o.status }}</span></td>
+<td><small>{{ o.created_at }}</small></td>
+<td><a href="/admin/order/{{ o.id }}" class="btn-sm">View</a></td>
+</tr>
+{% else %}
+<tr><td colspan="7" style="text-align:center;color:var(--muted)">No orders found</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,22 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.jutia.shop",
+      "sha256_cert_fingerprints": [
+        "3F:E0:8B:10:87:D3:8A:47:6E:DF:8A:55:C4:26:15:11:B2:4E:48:5A:25:6B:45:F1:15:73:DE:6F:C7:8A:9A:6F"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.pythonanywhere.jutia.twa",
+      "sha256_cert_fingerprints": [
+        "3F:E0:8B:10:87:D3:8A:47:6E:DF:8A:55:C4:26:15:11:B2:4E:48:5A:25:6B:45:F1:15:73:DE:6F:C7:8A:9A:6F"
+      ]
+    }
+  }
+]

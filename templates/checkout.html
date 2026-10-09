@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}إتمام الشراء{% endblock %}
+{% block content %}
+
+<div class="form-card">
+  <h2>📦 معلومات التوصيل</h2>
+
+  <div class="field"><label>الاسم الكامل</label>
+    <input id="f_name" required></div>
+  <div class="field"><label>رقم الهاتف</label>
+    <input id="f_phone" required></div>
+  <div class="field"><label>العنوان</label>
+    <textarea id="f_addr" rows="3" required></textarea></div>
+  <div class="field"><label>كود الخصم (اختياري)</label>
+    <input id="f_coupon" placeholder="مثل SPIN-ABC123"></div>
+
+  <button class="btn primary" onclick="submitOrder()" style="width:100%">
+    ✅ تأكيد الطلب (الدفع عند التسليم)
+  </button>
+</div>
+
+<script>
+async function submitOrder(){
+  const d = {
+    name: f_name.value.trim(),
+    phone: f_phone.value.trim(),
+    address: f_addr.value.trim(),
+    coupon: f_coupon.value.trim()
+  };
+  if(!d.name || !d.phone || !d.address){
+    showToast("⚠️ املأ جميع الحقول");
+    return;
+  }
+  const r = await api("/api/order", d);
+  if(r.ok){
+    location.href = "/success/" + r.order_id;
+  } else {
+    showToast("❌ " + (r.msg || "خطأ"));
+  }
+}
+</script>
+
+{% endblock %}

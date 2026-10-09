@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ o.id }}{% endblock %}
+{% block content %}
+<h2 class="section-title">Order #{{ o.id }}</h2>
+<div class="form-card" style="max-width:700px">
+<p><b>Customer:</b> {{ o.customer_name }}</p>
+<p><b>Phone:</b> {{ o.phone }}</p>
+<p><b>Address:</b> {{ o.address }}</p>
+<p><b>Status:</b> {{ o.status }}</p>
+<p><b>Date:</b> {{ o.created_at }}</p>
+{% if o.coupon %}<p><b>Coupon:</b> {{ o.coupon }} (-{{ o.discount|round(2) }})</p>{% endif %}
+<h3 style="margin-top:20px">Items</h3>
+<table class="table">
+<tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th></tr>
+{% for it in items %}
+<tr><td>{{ it.name }}</td><td>{{ it.price }}</td><td>{{ it.qty }}</td><td>{{ it.price * it.qty }}</td></tr>
+{% endfor %}
+</table>
+<h3 style="margin-top:20px">Total: {{ o.total|round(2) }} MAD</h3>
+<div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+<a href="https://wa.me/{{ o.phone|replace(" ","")|replace("+","") }}" target="_blank" class="btn primary">WhatsApp Customer</a>
+<form method="post" action="/admin/order/{{ o.id }}/status" style="display:flex;gap:6px">
+<select name="status" style="padding:10px;border-radius:8px;background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--line)">
+<option {% if o.status=="جديد" %}selected{% endif %}>جديد</option>
+<option {% if o.status=="تم الشحن" %}selected{% endif %}>تم الشحن</option>
+<option {% if o.status=="تم التسليم" %}selected{% endif %}>تم التسليم</option>
+</select>
+<button class="btn primary" type="submit">Update</button>
+</form>
+<form method="post" action="/admin/order/delete/{{ o.id }}" onsubmit="return confirm('Delete?')">
+<button class="btn" style="background:#ef4444" type="submit">Delete</button>
+</form>
+</div>
+<a href="/admin" class="btn ghost" style="margin-top:20px">Back</a>
+</div>
+{% endblock %}

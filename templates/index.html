@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Jutia — تسوق بذكاء{% endblock %}
+{% block content %}
+
+<section style="padding:14px 18px;border-radius:14px;margin-bottom:16px;background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(236,72,153,0.12));border:1px solid rgba(124,58,237,0.25);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+<div style="flex:1;min-width:180px">
+<div style="font-family:Amiri,serif;font-size:clamp(15px,2.5vw,19px);font-weight:700;color:#a78bfa;margin-bottom:2px">تسوّق بذكاء، والعب واربح</div>
+<div style="font-size:11px;color:#cbd5e1">تخفيضات تصل إلى <b style="color:#f4d03f">50%</b></div>
+</div>
+<a href="/shop" style="padding:9px 18px;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:12px;flex-shrink:0">🛍️ تسوّق</a>
+</section>
+
+<div class="mq"><div class="mq-t">
+{% for p in products %}<a href="/product/{{ p.id }}" class="mc">{% if p.image and (p.image.endswith('.png') or p.image.endswith('.jpg') or p.image.endswith('.jpeg') or p.image.endswith('.webp')) %}<img src="/static/uploads/{{ p.image }}">{% else %}<div class="me">{{ p.image or '📦' }}</div>{% endif %}<div class="mn">{{ p.name }}</div><div class="mp">{{ p.price }} د.م</div></a>{% endfor %}
+{% for p in market_products %}<a href="/marketplace/product/{{ p.id }}" class="mc">{% if p.image1 and (p.image1.endswith('.png') or p.image1.endswith('.jpg') or p.image1.endswith('.jpeg') or p.image1.endswith('.webp')) %}<img src="/static/uploads/{{ p.image1 }}">{% else %}<div class="me">📦</div>{% endif %}<div class="mn">{{ p.name }}</div><div class="mp">{{ p.price }} د.م</div></a>{% endfor %}
+</div></div>
+
+{% if best_sellers %}
+<section style="margin-bottom:30px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+<h2 style="font-family:Amiri,serif;font-size:22px;font-weight:700;color:#f4d03f">🔥 الأكثر مبيعاً</h2>
+<a href="/shop" style="color:var(--muted);font-size:13px;text-decoration:none">عرض الكل ←</a>
+</div>
+<div class="grid">
+{% for p in best_sellers %}
+<div class="pcard">
+<div class="badge" style="background:linear-gradient(135deg,#f4d03f,#ef4444)">🔥 {{ p.total_sold }} مبيع</div>
+<a href="/product/{{ p.id }}" class="img" style="padding:0">
+{% if p.image and (p.image.endswith('.png') or p.image.endswith('.jpg') or p.image.endswith('.jpeg') or p.image.endswith('.webp')) %}
+<img src="/static/uploads/{{ p.image }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover">
+{% else %}
+<div style="font-size:60px;height:100%;display:flex;align-items:center;justify-content:center">{{ p.image or '📦' }}</div>
+{% endif %}
+</a>
+<div class="body">
+<h3><a href="/product/{{ p.id }}" style="color:inherit;text-decoration:none">{{ p.name }}</a></h3>
+<div class="price"><b>{{ p.price }} د.م</b>{% if p.old_price %}<s>{{ p.old_price }} د.م</s>{% endif %}</div>
+<button class="add" onclick="addToCart({{ p.id }})">🛒 أضف</button>
+</div>
+</div>
+{% endfor %}
+</div>
+</section>
+{% endif %}
+
+<section style="margin-bottom:30px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+<h2 style="font-family:Amiri,serif;font-size:22px;font-weight:700;color:#22d3ee">✨ وصل حديثاً</h2>
+<a href="/shop" style="color:var(--muted);font-size:13px;text-decoration:none">عرض الكل ←</a>
+</div>
+<div class="grid">
+{% for p in products[:4] %}
+<div class="pcard">
+<div class="badge" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)">✨ جديد</div>
+<a href="/product/{{ p.id }}" class="img" style="padding:0">
+{% if p.image and (p.image.endswith('.png') or p.image.endswith('.jpg') or p.image.endswith('.jpeg') or p.image.endswith('.webp')) %}
+<img src="/static/uploads/{{ p.image }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover">
+{% else %}
+<div style="font-size:60px;height:100%;display:flex;align-items:center;justify-content:center">{{ p.image or '📦' }}</div>
+{% endif %}
+</a>
+<div class="body">
+<h3><a href="/product/{{ p.id }}" style="color:inherit;text-decoration:none">{{ p.name }}</a></h3>
+<div class="price"><b>{{ p.price }} د.م</b>{% if p.old_price %}<s>{{ p.old_price }} د.م</s>{% endif %}</div>
+<button class="add" onclick="addToCart({{ p.id }})">🛒 أضف</button>
+</div>
+</div>
+{% endfor %}
+</div>
+</section>
+
+<section style="margin-bottom:30px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+<h2 style="font-family:Amiri,serif;font-size:22px;font-weight:700;color:#a78bfa">⭐ منتجات مميزة</h2>
+<a href="/shop" style="color:var(--muted);font-size:13px;text-decoration:none">عرض الكل ←</a>
+</div>
+<div class="grid">
+{% for p in products %}
+<div class="pcard">
+{% if p.old_price and p.old_price > p.price %}<div class="badge">-{{ ((p.old_price - p.price) / p.old_price * 100) | round | int }}%</div>{% endif %}
+<a href="/product/{{ p.id }}" class="img" style="padding:0">
+{% if p.image and (p.image.endswith('.png') or p.image.endswith('.jpg') or p.image.endswith('.jpeg') or p.image.endswith('.webp')) %}
+<img src="/static/uploads/{{ p.image }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover">
+{% else %}
+<div style="font-size:60px;height:100%;display:flex;align-items:center;justify-content:center">{{ p.image or '📦' }}</div>
+{% endif %}
+</a>
+<div class="body">
+<h3><a href="/product/{{ p.id }}" style="color:inherit;text-decoration:none">{{ p.name }}</a></h3>
+<div class="price"><b>{{ p.price }} د.م</b>{% if p.old_price %}<s>{{ p.old_price }} د.م</s>{% endif %}</div>
+<button class="add" onclick="addToCart({{ p.id }})">🛒 أضف</button>
+</div>
+</div>
+{% endfor %}
+</div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:30px">
+<div style="padding:16px 10px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:26px;margin-bottom:6px">🚚</div>
+<div style="font-weight:700;font-size:12px">توصيل سريع</div>
+</div>
+<div style="padding:16px 10px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:26px;margin-bottom:6px">🔒</div>
+<div style="font-weight:700;font-size:12px">دفع عند التسليم</div>
+</div>
+<div style="padding:16px 10px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:26px;margin-bottom:6px">💎</div>
+<div style="font-weight:700;font-size:12px">جودة مضمونة</div>
+</div>
+<div style="padding:16px 10px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:26px;margin-bottom:6px">💬</div>
+<div style="font-weight:700;font-size:12px">دعم واتساب</div>
+</div>
+</section>
+
+<section style="margin-bottom:30px">
+<h2 style="font-family:Amiri,serif;font-size:22px;font-weight:700;color:#a78bfa;margin-bottom:16px">الفئات</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px">
+{% for c in categories %}
+<a href="/shop?cat={{ c.id }}" style="text-decoration:none;color:inherit">
+<div style="padding:16px 10px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center">
+<div style="font-size:30px;margin-bottom:6px">{{ c.icon }}</div>
+<div style="font-weight:600;font-size:12px">{{ c.name }}</div>
+</div>
+</a>
+{% endfor %}
+</div>
+</section>
+
+{% if testimonials %}
+<section style="margin-bottom:30px">
+<div style="text-align:center;margin-bottom:20px">
+<h2 style="font-family:Amiri,serif;font-size:24px;font-weight:700;color:#a78bfa">💬 شنو قالو زبناؤنا</h2>
+<p style="color:var(--muted);font-size:13px;margin-top:6px">آراء حقيقية من زبناء Jutia</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+{% for t in testimonials %}
+<div style="padding:20px;background:var(--card);border:1px solid var(--line);border-radius:16px">
+<div style="color:#fbbf24;font-size:18px;margin-bottom:10px">{{ '★' * t.rating }}</div>
+<p style="color:#cbd5e1;line-height:1.8;font-size:13px;margin-bottom:14px">"{{ t.message }}"</p>
+<div style="display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px">
+<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff">{{ t.name[0] }}</div>
+<div>
+<div style="font-weight:700;font-size:13px">{{ t.name }}</div>
+<div style="font-size:11px;color:var(--muted)">📍 {{ t.city }}</div>
+</div>
+</div>
+</div>
+{% endfor %}
+</div>
+</section>
+{% endif %}
+
+<section style="padding:28px 20px;border-radius:20px;margin-bottom:20px;background:linear-gradient(135deg,rgba(244,208,63,0.15),rgba(236,72,153,0.15));border:1px solid rgba(244,208,63,0.3);text-align:center">
+<div style="font-size:44px;margin-bottom:8px">🎡 🎁 🎯</div>
+<h2 style="font-family:Amiri,serif;font-size:clamp(20px,4vw,26px);font-weight:700;color:#f4d03f;margin-bottom:8px">العب واربح تخفيضات!</h2>
+<p style="color:#cbd5e1;font-size:13px;margin-bottom:16px">3 ألعاب ممتعة — اربح كوبونات حتى 50%</p>
+<a href="/games" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#f4d03f,#ec4899);color:#fff;text-decoration:none;border-radius:50px;font-weight:800;font-size:14px">🎮 ابدأ اللعب</a>
+</section>
+
+<section style="padding:24px 20px;border-radius:20px;margin-bottom:30px;background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(124,58,237,0.15));border:1px solid rgba(6,182,212,0.3)">
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+<div style="flex:1;min-width:200px">
+<div style="display:inline-block;padding:4px 12px;background:rgba(6,182,212,0.2);border-radius:50px;font-size:10px;letter-spacing:2px;color:#22d3ee;font-weight:600;margin-bottom:8px">🆕 جديد</div>
+<h2 style="font-family:Amiri,serif;font-size:clamp(18px,3vw,24px);font-weight:700;color:#22d3ee;margin-bottom:8px">Jutia Market</h2>
+<p style="color:#cbd5e1;font-size:13px">منتجات من تجار مغاربة — جديدة ومستعملة</p>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<a href="/marketplace" style="padding:10px 20px;background:linear-gradient(135deg,#06b6d4,#7c3aed);color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:13px">🛍️ تصفح</a>
+<a href="/sell/register" style="padding:10px 20px;background:rgba(255,255,255,0.08);color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,0.15)">🏪 كن تاجر</a>
+</div>
+</div>
+</section>
+
+<section style="text-align:center;padding:36px 20px;background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(236,72,153,0.1));border-radius:20px;border:1px solid rgba(124,58,237,0.25)">
+<h2 style="font-family:Amiri,serif;font-size:clamp(20px,4vw,28px);font-weight:700;background:linear-gradient(135deg,#fff,#a78bfa,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:12px">جاهز تكتشف منتجاتنا؟</h2>
+<p style="color:#cbd5e1;font-size:13px;margin-bottom:20px">التوصيل لكل المدن المغربية</p>
+<a href="/shop" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;text-decoration:none;border-radius:50px;font-weight:800;font-size:15px">🛍️ ابدأ التسوق</a>
+</section>
+
+{% endblock %}

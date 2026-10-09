@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}الرسائل{% endblock %}
+{% block content %}
+<h2 class="section-title">💬 الرسائل</h2>
+<div style="margin-bottom:16px"><a href="/sell/dashboard" class="btn-sm">← لوحة التاجر</a></div>
+
+{% if messages %}
+{% for m in messages %}
+<div style="background:{% if not m.is_read %}rgba(124,58,237,0.12){% else %}var(--card){% endif %};border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+<div style="flex:1;min-width:200px">
+<div><b>{{ m.sender_name }}</b>{% if not m.is_read %}<span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:8px;font-size:10px;margin-right:6px">جديدة</span>{% endif %}</div>
+<div style="font-size:12px;color:var(--muted)">📞 {{ m.sender_phone }} · 📅 {{ m.created_at[:16] }}</div>
+{% if m.product_name %}<div style="font-size:12px;color:#a78bfa;margin-top:4px">📦 بخصوص: {{ m.product_name }}</div>{% endif %}
+<div style="margin-top:8px;color:#cbd5e1">{{ m.message[:100] }}{% if m.message|length > 100 %}...{% endif %}</div>
+</div>
+<div style="display:flex;gap:6px">
+<a href="/sell/message/{{ m.id }}" class="btn-sm">فتح</a>
+<form method="post" action="/sell/message/{{ m.id }}/delete" onsubmit="return confirm('حذف؟')">
+<button class="btn-sm" style="background:#ef4444">🗑️</button>
+</form>
+</div>
+</div>
+</div>
+{% endfor %}
+{% else %}
+<div style="text-align:center;padding:60px;background:var(--card);border-radius:16px">
+<div style="font-size:60px">📭</div>
+<p style="color:var(--muted);margin-top:12px">ما عندكش رسائل بعد</p>
+</div>
+{% endif %}
+{% endblock %}

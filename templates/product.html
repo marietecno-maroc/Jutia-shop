@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ p.name }}
+
+{% endblock %}
+{% block content %}
+
+<div class="pd">
+  <div>
+{% set imgs = [] %}
+{% if p.image and (p.image.endswith('.png') or p.image.endswith('.jpg') or p.image.endswith('.jpeg') or p.image.endswith('.webp')) %}{% set _ = imgs.append(p.image) %}{% endif %}
+{% if p.image2 and (p.image2.endswith('.png') or p.image2.endswith('.jpg') or p.image2.endswith('.jpeg') or p.image2.endswith('.webp')) %}{% set _ = imgs.append(p.image2) %}{% endif %}
+{% if p.image3 and (p.image3.endswith('.png') or p.image3.endswith('.jpg') or p.image3.endswith('.jpeg') or p.image3.endswith('.webp')) %}{% set _ = imgs.append(p.image3) %}{% endif %}
+
+{% if imgs %}
+<div class="carousel">
+  <div class="carousel-main">
+    <img id="carouselImg" src="/static/uploads/{{ imgs[0] }}" alt="{{ p.name }}">
+  </div>
+  {% if imgs|length > 1 %}
+  <div class="carousel-thumbs">
+    {% for img in imgs %}
+    <img src="/static/uploads/{{ img }}" onclick="document.getElementById('carouselImg').src=this.getAttribute('data-src');var t=document.querySelectorAll('.thumb');for(var k=0;k<t.length;k++)t[k].classList.remove('thumb-active');this.classList.add('thumb-active')" class="thumb {% if loop.first %}thumb-active{% endif %}" data-src="/static/uploads/{{ img }}">
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% else %}
+<div style="border-radius:24px;background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(236,72,153,0.2));height:400px;display:flex;align-items:center;justify-content:center;font-size:120px">{{ p.image or '📦' }}</div>
+{% endif %}
+</div>
+  <div>
+    <h1>{{ p.name }}</h1>
+    <div class="rating">⭐ {{ p.rating }} / 5</div>
+    <div class="price-big">
+      {{ p.price }} د.م
+      {% if p.old_price %}<s>{{ p.old_price }} د.م</s>{% endif %}
+    </div>
+    <p class="desc">{{ p.description }}</p>
+
+    <div class="qty">
+      <button onclick="decQty()">−</button>
+      <span id="qty">1</span>
+      <button onclick="incQty()">+</button>
+    </div>
+
+    <button class="btn primary" onclick="addProduct()">🛒 أضف إلى السلة</button>
+    <a href="/cart" class="btn ghost">اذهب للسلة</a>
+
+    <div style="margin-top:20px;color:var(--muted);font-size:14px">
+      ✅ ضمان الإرجاع خلال 7 أيام<br>
+      🚚 توصيل سريع لجميع المدن<br>
+      🔒 دفع آمن عند التسليم
+    </div>
+  </div>
+</div>
+
+{% if related %}
+<h2 class="section-title">منتجات مشابهة</h2>
+<div class="grid">
+  {% for r in related %}
+    <div class="pcard">
+      <a href="/product/{{ r.id }}" class="img">{{ r.image }}</a>
+      <div class="body">
+        <h3><a href="/product/{{ r.id }}">{{ r.name }}</a></h3>
+        <div class="price"><b>{{ r.price }} د.م</b></div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<script>
+let qty = 1;
+function incQty(){ qty++; document.getElementById("qty").textContent = qty; }
+function decQty(){ if(qty>1){ qty--; document.getElementById("qty").textContent = qty; } }
+function addProduct(){ addToCart({{ p.id }}, qty); }
+</script>
+
+{% endblock %}

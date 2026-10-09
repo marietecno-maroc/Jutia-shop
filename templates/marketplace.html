@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}السوق — منتجات التجار
+
+
+
+<script>
+async function toggleFav(pid, btn){
+  event.preventDefault();
+  event.stopPropagation();
+  try {
+    const r = await fetch('/api/favorite/toggle/' + pid, {method:'POST'});
+    const d = await r.json();
+    if(d.ok){
+      if(d.action === 'added'){
+        btn.innerHTML = '❤️';
+        btn.classList.add('active');
+      } else {
+        btn.innerHTML = '🤍';
+        btn.classList.remove('active');
+      }
+    }
+  } catch(e) { console.log('Error:', e); }
+  return false;
+}
+
+async function loadFavStatus(){
+  const btns = document.querySelectorAll('.fav-btn-mini');
+  for(let btn of btns){
+    try {
+      const r = await fetch('/api/favorite/status/' + btn.dataset.pid);
+      const d = await r.json();
+      if(d.favorited){
+        btn.innerHTML = '❤️';
+        btn.classList.add('active');
+      }
+    } catch(e){}
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadFavStatus);
+</script>
+
+{% endblock %}
+{% block content %}
+
+<style>
+.fav-btn-mini{
+  position:absolute;top:10px;right:10px;width:38px;height:38px;
+  border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);
+  border:2px solid rgba(255,255,255,0.2);color:#fff;font-size:18px;
+  cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;
+  transition:all 0.3s;
+}
+.fav-btn-mini:hover{transform:scale(1.1)}
+.fav-btn-mini.active{background:linear-gradient(135deg,#ef4444,#ec4899);border-color:#ef4444}
+</style>
+
+
+<section style="text-align:center;padding:40px 20px 30px;background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(236,72,153,0.1));border-radius:24px;margin-bottom:30px">
+<h1 style="font-size:clamp(28px,5vw,42px);font-weight:800;background:linear-gradient(135deg,#a78bfa,#ec4899,#f4d03f);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:12px">
+🛍️ Jutia Market
+</h1>
+<p style="color:var(--muted);font-size:15px;max-width:520px;margin:auto">منتجات من تجار مغاربة — جديدة ومستعملة، بأسعار مميزة</p>
+<div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+<a href="/sell/register" class="btn primary">🏪 انضم كتاجر</a>
+<a href="/sellers" class="btn ghost">👥 كل التجار</a>
+</div>
+</section>
+
+<form method="get" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-bottom:20px">
+<input name="q" value="{{ q }}" placeholder="🔍 ابحث عن منتج..." style="padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,0.04);color:#fff;font-family:inherit">
+<select name="cat" style="padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,0.04);color:#fff;font-family:inherit">
+<option value="">كل الفئات</option>
+{% for c in categories %}<option value="{{ c.id }}" {% if current_cat == c.id|string %}selected{% endif %}>{{ c.icon }} {{ c.name }}</option>{% endfor %}
+</select>
+<select name="city" style="padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,0.04);color:#fff;font-family:inherit">
+<option value="">كل المدن</option>
+{% for c in cities %}<option value="{{ c.city }}" {% if current_city == c.city %}selected{% endif %}>{{ c.city }}</option>{% endfor %}
+</select>
+<button class="btn primary" type="submit">بحث</button>
+</form>
+
+{% if products %}
+<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+{% for p in products %}
+<div class="pcard" style="position:relative">
+<button class="fav-btn-mini" onclick="event.preventDefault();toggleFav({{ p.id }},this)" data-pid="{{ p.id }}">🤍</button>
+<div class="badge" style="background:linear-gradient(135deg,#22c55e,#06b6d4)">مستعمل</div>
+<a href="/marketplace/product/{{ p.id }}" class="img" style="padding:0">
+{% if p.image1 %}<img src="/static/uploads/{{ p.image1 }}" alt="{{ p.name }}" style="width:100%;height:180px;object-fit:cover">
+{% else %}<span style="font-size:60px">📦</span>{% endif %}
+</a>
+<div class="body">
+<h3><a href="/marketplace/product/{{ p.id }}">{{ p.name }}</a></h3>
+<div style="font-size:12px;color:var(--muted)">🏪 {{ p.shop_name or p.seller_name }}</div>
+<div style="font-size:12px;color:var(--muted)">📍 {{ p.city or 'غير محدد' }}</div>
+<div class="price"><b>{{ p.price }} د.م</b></div>
+<a href="/marketplace/product/{{ p.id }}" class="add" style="text-align:center;text-decoration:none">👁️ التفاصيل</a>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:80px 20px;background:var(--card);border-radius:20px">
+<div style="font-size:80px">🔍</div>
+<h3 style="margin:16px 0">ما كاينش منتجات</h3>
+<p style="color:var(--muted)">جرب تبدل الفلاتر ولا البحث</p>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+<h2 class="section-title">Customers</h2>
+<div style="margin-bottom:16px"><a href="/admin" class="btn-sm">Back to Admin</a></div>
+<table class="table">
+<tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Orders</th><th>Total Spent</th><th>Joined</th></tr>
+{% for c in customers %}
+<tr>
+<td>{{ c.id }}</td>
+<td>{{ c.name }}</td>
+<td>{{ c.email }}</td>
+<td>{{ c.phone or "-" }}</td>
+<td>{{ c.orders_count }}</td>
+<td>{{ c.total_spent|round(2) }} MAD</td>
+<td>{{ c.created_at }}</td>
+</tr>
+{% else %}
+<tr><td colspan="7" style="text-align:center;color:var(--muted)">No customers yet</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

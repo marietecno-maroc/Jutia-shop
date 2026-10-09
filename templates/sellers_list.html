@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}التجار{% endblock %}
+{% block content %}
+<h2 class="section-title">🏪 تجار Jutia</h2>
+<div style="margin-bottom:16px"><a href="/marketplace" class="btn-sm">← السوق</a></div>
+
+{% if sellers %}
+<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+{% for s in sellers %}
+<div class="pcard" style="text-align:center;padding:24px">
+<div style="width:80px;height:80px;margin:auto;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));display:flex;align-items:center;justify-content:center;font-size:36px">🏪</div>
+<h3 style="margin-top:16px">{{ s.shop_name or s.name }}</h3>
+<div style="font-size:12px;color:var(--muted)">📍 {{ s.city or 'المغرب' }}</div>
+<div style="margin:12px 0;font-size:14px"><b style="color:#fbbf24">{{ s.products_count }}</b> منتج متوفر</div>
+{% if s.bio %}<p style="font-size:12px;color:var(--muted);margin:8px 0">{{ s.bio[:80] }}</p>{% endif %}
+<a href="/marketplace?seller={{ s.id }}" class="btn primary" style="display:block;margin-top:12px;text-align:center">🛍️ عرض المنتجات</a>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:60px;background:var(--card);border-radius:20px">
+<div style="font-size:60px">🏪</div>
+<h3 style="margin:16px 0">ما كاينش تجار بعد</h3>
+<a href="/sell/register" class="btn primary">كن أول تاجر</a>
+</div>
+{% endif %}
+{% endblock %}

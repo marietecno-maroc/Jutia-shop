@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block title %}لوحة التحكم</h2>
+<h2 style="display:none">
+<div id="newOrdersBanner" style="display:none;background:linear-gradient(135deg,#ef4444,#ec4899);border-radius:16px;padding:16px 20px;margin-bottom:20px;color:#fff;box-shadow:0 10px 30px rgba(239,68,68,0.4);animation:pulse 1.5s infinite">
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+<div>
+<div style="font-size:20px;font-weight:800;display:flex;align-items:center;gap:10px">
+🔔 <span id="newOrdersText">لديك طلبات جديدة!</span>
+</div>
+<div style="font-size:13px;opacity:0.9;margin-top:4px" id="newOrdersDetail"></div>
+</div>
+<a href="/admin/orders" class="btn-sm" style="background:#fff;color:#ef4444;font-weight:800">عرض الطلبات</a>
+</div>
+</div>
+
+<style>
+@keyframes pulse {
+  0%,100% { box-shadow: 0 10px 30px rgba(239,68,68,0.4); }
+  50% { box-shadow: 0 10px 40px rgba(239,68,68,0.8); }
+}
+.new-badge {
+  display:inline-block;background:#ef4444;color:#fff;
+  border-radius:10px;padding:2px 8px;font-size:11px;
+  font-weight:800;margin-right:6px;animation:pulse 1.5s infinite;
+}
+</style>
+
+<script>
+let lastOrderCount = -1;
+
+async function checkNewOrders(){
+  try{
+    const r = await fetch("/api/admin/new-orders");
+    if(!r.ok) return;
+    const d = await r.json();
+    const banner = document.getElementById("newOrdersBanner");
+    const text = document.getElementById("newOrdersText");
+    const detail = document.getElementById("newOrdersDetail");
+    
+    if(d.count > 0){
+      banner.style.display = "block";
+      text.textContent = "لديك " + d.count + " طلب جديد!";
+      if(d.recent && d.recent.length > 0){
+        detail.textContent = "آخر طلب: " + d.recent[0].customer_name + " - " + d.recent[0].total + " د.م";
+      }
+    } else {
+      banner.style.display = "none";
+    }
+    
+    // صوت لما تجي طلب جديد
+    if(lastOrderCount >= 0 && d.count > lastOrderCount){
+      playNotificationSound();
+    }
+    lastOrderCount = d.count;
+    
+    // نغيرو عنوان الصفحة
+    if(d.count > 0){
+      document.title = "(" + d.count + ") " + document.title.replace(/^\(\d+\)\s*/, "");
+    }
+  }catch(e){}
+}
+
+function playNotificationSound(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.setValueAtTime(660, ctx.currentTime + 0.15);
+    o.frequency.setValueAtTime(880, ctx.currentTime + 0.3);
+    g.gain.setValueAtTime(0.15, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    o.start(); o.stop(ctx.currentTime + 0.6);
+  }catch(e){}
+}
+
+// تشغيل
+checkNewOrders();
+setInterval(checkNewOrders, 30000);
+</script>
+
+{% endblock %}
+{% block content %}
+
+<h2 class="section-title">👑 لوحة التحكم</h2>
+<div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:14px;padding:16px;margin-bottom:20px">
+<h3 style="margin-bottom:12px;font-size:16px">Export (CSV for Excel)</h3>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<a href="/admin/export/orders" class="btn-sm" style="background:#22c55e">Orders</a>
+<a href="/admin/export/products" class="btn-sm" style="background:#0ea5e9">Products</a>
+<a href="/admin/export/customers" class="btn-sm" style="background:#f59e0b">Customers</a>
+</div>
+<p style="color:#94a3b8;font-size:12px;margin-top:10px">Download CSV files to open in Excel</p>
+</div>
+<div style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);border-radius:14px;padding:16px;margin-bottom:20px">
+<h3 style="margin-bottom:12px;font-size:16px">Backup</h3>
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+<a href="/admin/backup/download" class="btn-sm" style="background:#22c55e">Download backup</a>
+<form method="post" action="/admin/backup/upload" enctype="multipart/form-data" style="display:flex;gap:8px;align-items:center;margin:0">
+<input type="file" name="backup_file" accept=".db" style="padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);font-size:12px">
+<button class="btn-sm" type="submit" style="background:#0ea5e9">Upload backup</button>
+</form>
+</div>
+<p style="color:#94a3b8;font-size:12px;margin-top:10px">Download backup weekly to protect your data</p>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+<a href="/admin/analytics" class="btn-sm" style="background:#f59e0b">Analytics</a>
+<a href="/admin/orders" class="btn-sm">All Orders</a>
+<a href="/admin/customers" class="btn-sm">Customers</a>
+<a href="/admin/coupons" class="btn-sm">Coupons</a>
+<a href="/admin/categories" class="btn-sm">Categories</a>
+<a href="/admin/settings" class="btn-sm">Settings</a>
+<a href="/admin/change-password" class="btn-sm">Change Password</a>
+<a href="/shop" class="btn-sm" style="background:#22c55e">View Shop</a>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="n">{{ stats.products }}</div><div class="l">منتج</div></div>
+  <div class="stat"><div class="n">{{ stats.orders }}</div><div class="l">طلب</div></div>
+  <div class="stat"><div class="n">{{ stats.users }}</div><div class="l">مستخدم</div></div>
+  <div class="stat"><div class="n">{{ stats.revenue|round(0)|int }}</div><div class="l">المبيعات (د.م)</div></div>
+</div>
+
+<h3 class="section-title">➕ إضافة منتج</h3>
+<div class="form-card" style="max-width:100%;margin:0 0 30px">
+  <form method="post" action="/admin/product/add" enctype="multipart/form-data">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field"><label>الاسم</label><input name="name" required></div>
+      <div class="field"><label>الأيقونة (إيموجي)</label><input name="image" value="🛍️"></div>
+<div class="field"><label>📷 الصورة 1 (رئيسية)</label><input name="image_file" type="file" accept="image/*"></div>
+      <div class="field"><label>📷 الصورة 2 (اختيارية)</label><input name="image_file2" type="file" accept="image/*"></div>
+      <div class="field"><label>📷 الصورة 3 (اختيارية)</label><input name="image_file3" type="file" accept="image/*"></div>
+      <div class="field"><label>السعر</label><input name="price" type="number" step="0.01" required></div>
+      <div class="field"><label>السعر القديم</label><input name="old_price" type="number" step="0.01"></div>
+      <div class="field"><label>المخزون</label><input name="stock" type="number" value="100"></div>
+      <div class="field"><label>الفئة (ID)</label><input name="category_id" type="number" value="1"></div>
+    </div>
+    <div class="field"><label>الوصف</label>
+      <textarea name="description" rows="2"></textarea></div>
+    <button class="btn primary" type="submit">إضافة المنتج</button>
+  </form>
+</div>
+
+<h3 class="section-title">📦 الطلبات</h3>
+<table class="table">
+  <thead><tr>
+    <th>#</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th><th></th>
+  </tr></thead>
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td>#{{ o.id }}</td>
+      <td>{{ o.customer_name }}</td>
+      <td>{{ o.phone }}</td>
+      <td><b>{{ o.total|round(2) }}</b> د.م</td>
+      <td>
+        <span class="badge-status
+          {% if o.status=='جديد' %}s-new{% elif o.status=='تم الشحن' %}s-ship{% else %}s-done{% endif %}">
+          {{ o.status }}
+        </span>
+      </td>
+      <td><small>{{ o.created_at }}</small></td>
+      <td>
+        <form method="post" action="/admin/order/{{ o.id }}/status" style="display:flex;gap:6px">
+          <select name="status" style="padding:6px;border-radius:8px;
+            background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--line)">
+            <option>جديد</option><option>تم الشحن</option><option>تم التسليم</option>
+          </select>
+          <button class="btn-sm" type="submit">حفظ</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3 class="section-title">🛍️ المنتجات</h3>
+<table class="table">
+  <thead><tr><th>#</th><th></th><th>الاسم</th><th>السعر</th><th>المخزون</th><th></th></tr></thead>
+  <tbody>
+    {% for p in products %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td style="font-size:28px">{{ p.image }}</td>
+      <td>{{ p.name }}</td>
+      <td>{{ p.price }} د.م</td>
+      <td>{{ p.stock }}</td>
+      <td>
+        <a href="/admin/product/edit/{{ p.id }}" class="btn-sm" style="background:#0ea5e9">Edit</a><form method="post" action="/admin/product/delete/{{ p.id }}"
+              onsubmit="return confirm('حذف المنتج؟')">
+          <button class="btn-sm" style="background:#ef4444">حذف</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

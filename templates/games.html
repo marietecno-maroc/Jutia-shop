@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Games{% endblock %}
+{% block content %}
+
+<h2 class="section-title">🎁 العب واربح</h2>
+
+<div class="games-grid">
+
+<div class="game-card">
+<div class="icon">🎡</div>
+<h3>عجلة الحظ</h3>
+<p>أدر العجلة واربح حتى 50%</p>
+<div class="wheel-wrap">
+<div class="pointer">▼</div>
+<div class="wheel" id="wheel">
+<div class="wheel-inner"></div>
+<div class="wheel-center">🎯</div>
+</div>
+</div>
+<button class="btn primary" onclick="spinWheel()">🎡 أدر العجلة</button>
+<div id="spinResult"></div>
+</div>
+
+<div class="game-card">
+<div class="icon">🎫</div>
+<h3>بطاقة الحظ</h3>
+<p>اخدش البطاقة</p>
+<div class="scratch-box" id="scratchBox"></div>
+<button class="btn primary" onclick="newScratch()">🎫 بطاقة جديدة</button>
+<div id="scratchResult"></div>
+</div>
+
+<div class="game-card">
+<div class="icon">🧠</div>
+<h3>تحدي المعرفة</h3>
+<p>5 أسئلة للفوز</p>
+<div id="quizArea">
+<button class="btn primary" onclick="startQuiz()">🚀 ابدأ</button>
+</div>
+</div>
+
+</div>
+
+<style>
+.wheel-wrap{position:relative;width:280px;height:280px;margin:20px auto}
+.wheel{width:100%;height:100%;border-radius:50%;position:relative;border:8px solid #1e1e3c;transition:transform 4.5s cubic-bezier(.17,.67,.2,1);box-shadow:0 0 50px rgba(124,58,237,0.5)}
+.wheel-inner{position:absolute;inset:0;border-radius:50%;background:conic-gradient(#ef4444 0 45deg,#f59e0b 45deg 90deg,#22c55e 90deg 135deg,#06b6d4 135deg 180deg,#8b5cf6 180deg 225deg,#ec4899 225deg 270deg,#fbbf24 270deg 315deg,#10b981 315deg 360deg)}
+.wheel-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 0 25px rgba(236,72,153,.7);z-index:2;border:3px solid #fff}
+.pointer{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:34px;z-index:3;color:#fbbf24}
+.scratch-box{position:relative;width:280px;height:180px;margin:20px auto;border-radius:20px;overflow:hidden;background:linear-gradient(135deg,#fbbf24,#ec4899);display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;color:#fff;box-shadow:0 0 40px rgba(236,72,153,.5)}
+@keyframes pulse-win{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.win-anim{animation:pulse-win .6s ease-in-out 3}
+</style>
+
+<script>
+let audioCtx;
+function playSound(t){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    if(t==="win"){
+      o.frequency.setValueAtTime(523,audioCtx.currentTime);
+      o.frequency.setValueAtTime(659,audioCtx.currentTime+0.1);
+      o.frequency.setValueAtTime(784,audioCtx.currentTime+0.2);
+      o.frequency.setValueAtTime(1047,audioCtx.currentTime+0.3);
+      g.gain.setValueAtTime(0.15,audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.6);
+      o.start(); o.stop(audioCtx.currentTime+0.6);
+    } else {
+      o.frequency.setValueAtTime(300,audioCtx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+1);
+      g.gain.setValueAtTime(0.08,audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+1);
+      o.start(); o.stop(audioCtx.currentTime+1);
+    }
+  }catch(e){}
+}
+
+let spinning=false;
+async function spinWheel(){
+  if(spinning) return;
+  spinning=true;
+  playSound("spin");
+  const r = await api("/api/spin",{});
+  const wheel = document.getElementById("wheel");
+  const target = 360*6 + (360 - (r.index*45 + 22.5));
+  wheel.style.transform = "rotate("+target+"deg)";
+  setTimeout(()=>{
+    let h = "";
+    if(r.percent>0){
+      playSound("win");
+      h = '<div class="coupon win-anim"><div class="code">'+r.code+'</div><div class="pct">🎉 ربحت '+r.percent+'%</div></div>';
+    } else {
+      h = '<div style="color:#94a3b8;margin-top:12px">😅 حظ أوفر</div>';
+    }
+    document.getElementById("spinResult").innerHTML = h;
+    spinning=false;
+  }, 4600);
+}
+
+let canvas, ctx, isDrawing=false, scratchReward=null;
+async function newScratch(){
+  const r = await api("/api/scratch",{});
+  scratchReward = r;
+  document.getElementById("scratchResult").innerHTML="";
+  const box = document.getElementById("scratchBox");
+  box.innerHTML = '<div style="font-size:44px;font-weight:900">'+r.percent+'%</div><canvas id="scratchCanvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>';
+  initCanvas();
+}
+function initCanvas(){
+  canvas = document.getElementById("scratchCanvas");
+  if(!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width; canvas.height = rect.height;
+  ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#a78bfa";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "white";
+  ctx.font = "bold 20px Cairo";
+  ctx.textAlign = "center";
+  ctx.fillText("اخدش هنا", canvas.width/2, canvas.height/2+7);
+  ctx.globalCompositeOperation = "destination-out";
+  canvas.addEventListener("mousedown",()=>isDrawing=true);
+  canvas.addEventListener("mouseup",()=>isDrawing=false);
+  canvas.addEventListener("mousemove",draw);
+  canvas.addEventListener("touchstart",e=>{isDrawing=true;e.preventDefault();});
+  canvas.addEventListener("touchend",()=>isDrawing=false);
+  canvas.addEventListener("touchmove",e=>{const t=e.touches[0];draw({clientX:t.clientX,clientY:t.clientY});e.preventDefault();});
+}
+function draw(e){
+  if(!isDrawing) return;
+  const rect = canvas.getBoundingClientRect();
+  ctx.beginPath();
+  ctx.arc(e.clientX-rect.left, e.clientY-rect.top, 22, 0, Math.PI*2);
+  ctx.fill();
+  const img = ctx.getImageData(0,0,canvas.width,canvas.height);
+  let c=0;
+  for(let i=3;i<img.data.length;i+=4) if(img.data[i]===0) c++;
+  if(c/(img.data.length/4)>0.5 && scratchReward){
+    isDrawing=false;
+    playSound("win");
+    document.getElementById("scratchResult").innerHTML = '<div class="coupon win-anim"><div class="code">'+scratchReward.code+'</div><div class="pct">🎉 ربحت '+scratchReward.percent+'%</div></div>';
+    scratchReward = null;
+  }
+}
+
+const quizQ = [
+  {q:"ما عاصمة المغرب؟",a:["الرباط","الدار البيضاء","مراكش","فاس"],c:0},
+  {q:"كم عدد أيام السنة؟",a:["360","365","370","350"],c:1},
+  {q:"أكبر كوكب؟",a:["الأرض","زحل","المشتري","المريخ"],c:2},
+  {q:"مؤلف البؤساء؟",a:["فيكتور هوغو","تولستوي","نجيب محفوظ","دوستويفسكي"],c:0},
+  {q:"أطول نهر؟",a:["النيل","الأمازون","الفرات","دجلة"],c:0}
+];
+let qs = {i:0,score:0};
+function startQuiz(){ qs={i:0,score:0}; renderQuiz(); }
+function renderQuiz(){
+  const a = document.getElementById("quizArea");
+  if(qs.i >= quizQ.length) return finishQuiz();
+  const q = quizQ[qs.i];
+  a.innerHTML = '<p style="color:#94a3b8;font-size:14px">سؤال '+(qs.i+1)+' / '+quizQ.length+'</p><h4 style="margin:10px 0 16px">'+q.q+'</h4><div style="display:flex;flex-direction:column;gap:8px">'+q.a.map((o,i)=>'<button class="btn ghost" onclick="answerQuiz('+i+')" style="padding:10px">'+o+'</button>').join("")+'</div>';
+}
+function answerQuiz(i){
+  if(i === quizQ[qs.i].c) qs.score++;
+  playSound("click");
+  qs.i++;
+  renderQuiz();
+}
+async function finishQuiz(){
+  const r = await api("/api/quiz",{score:qs.score,total:quizQ.length});
+  playSound("win");
+  document.getElementById("quizArea").innerHTML = '<div style="font-size:44px;margin:10px 0" class="win-anim">'+(qs.score>=3?"🏆":"💪")+'</div><h4>نتيجتك: '+qs.score+' / '+quizQ.length+'</h4><div class="coupon"><div class="code">'+r.code+'</div><div class="pct">🎁 ربحت '+r.percent+'%</div></div><button class="btn ghost" style="margin-top:14px" onclick="startQuiz()">🔄 إعادة</button>';
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  initCanvas();
+  newScratch();
+});
+</script>
+
+{% endblock %}

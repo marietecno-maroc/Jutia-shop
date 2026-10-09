@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<h2 class="section-title">Categories</h2>
+<div style="margin-bottom:16px"><a href="/admin" class="btn-sm">Back to Admin</a></div>
+<div class="form-card" style="max-width:100%">
+<h3 style="margin-bottom:16px">Add Category</h3>
+<form method="post" action="/admin/category/add" style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
+<div><label>Name</label><input name="name" required placeholder="Electronics"></div>
+<div><label>Icon (emoji)</label><input name="icon" placeholder="MOBILE"></div>
+<button class="btn primary" type="submit">Add</button>
+</form>
+</div>
+<table class="table" style="margin-top:20px">
+<tr><th>#</th><th>Icon</th><th>Name</th><th>Products</th><th>Action</th></tr>
+{% for c in cats %}
+<tr>
+<td>{{ c.id }}</td>
+<td style="font-size:28px">{{ c.icon }}</td>
+<td>{{ c.name }}</td>
+<td>{{ c.products_count }}</td>
+<td>
+<form method="post" action="/admin/category/delete/{{ c.id }}" onsubmit="return confirm('Delete?')">
+<button class="btn-sm" style="background:#ef4444">Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

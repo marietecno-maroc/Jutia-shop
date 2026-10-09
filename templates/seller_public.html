@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ seller.shop_name or seller.name }}{% endblock %}
+{% block content %}
+<section style="background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(236,72,153,0.1));border-radius:24px;padding:32px;margin-bottom:30px;text-align:center">
+<div style="width:100px;height:100px;margin:auto;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));display:flex;align-items:center;justify-content:center;font-size:44px">SHOP</div>
+<h1 style="font-size:28px;margin-top:16px">{{ seller.shop_name or seller.name }}</h1>
+<div style="color:var(--muted);margin-top:8px">📍 {{ seller.city or 'المغرب' }}</div>
+<div style="margin-top:16px;display:inline-flex;align-items:center;gap:10px;background:var(--card);padding:10px 20px;border-radius:50px;border:1px solid var(--line)">
+<span style="font-size:22px;color:#fbbf24">★</span>
+<b style="font-size:22px">{{ rating_data.avg_rating or 0 }}</b>
+<span style="color:var(--muted)">({{ rating_data.count }} تقييم)</span>
+</div>
+{% if seller.bio %}<p style="color:var(--muted);margin-top:16px;max-width:500px;margin-left:auto;margin-right:auto">{{ seller.bio }}</p>{% endif %}
+</section>
+
+<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px">
+<h3 style="margin-bottom:12px">⭐ قيم هاد التاجر</h3>
+<div style="display:flex;gap:8px;margin-bottom:12px;font-size:30px;justify-content:center" id="stars">
+{% for i in range(1,6) %}
+<span onclick="setRating({{ i }})" style="cursor:pointer;color:{% if my_rating and i <= my_rating.rating %}#fbbf24{% else %}#444{% endif %}" data-star="{{ i }}">★</span>
+{% endfor %}
+</div>
+<textarea id="ratingComment" placeholder="اكتب تعليق (اختياري)..." rows="2" style="width:100%;padding:10px;border-radius:10px;background:rgba(255,255,255,0.04);color:#fff;border:1px solid var(--line);font-family:inherit">{{ my_rating.comment if my_rating else '' }}</textarea>
+<button class="btn primary" onclick="submitRating()" style="width:100%;margin-top:12px">إرسال التقييم</button>
+<div id="ratingResult" style="margin-top:10px;text-align:center"></div>
+</div>
+
+<h2 class="section-title">📦 منتجات التاجر</h2>
+{% if products %}
+<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+{% for p in products %}
+<div class="pcard">
+<a href="/marketplace/product/{{ p.id }}" class="img" style="padding:0">
+{% if p.image1 %}<img src="/static/uploads/{{ p.image1 }}" style="width:100%;height:180px;object-fit:cover">{% else %}<span style="font-size:60px">📦</span>{% endif %}
+</a>
+<div class="body">
+<h3><a href="/marketplace/product/{{ p.id }}">{{ p.name }}</a></h3>
+<div class="price"><b>{{ p.price }} MAD</b></div>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<p style="text-align:center;color:var(--muted);padding:40px">لا توجد منتجات</p>
+{% endif %}
+
+{% if ratings %}
+<h2 class="section-title" style="margin-top:40px">💬 آراء الزبناء</h2>
+{% for r in ratings %}
+<div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px">
+<div style="color:#fbbf24;font-size:18px">★ {{ r.rating }} / 5</div>
+{% if r.comment %}<p style="margin-top:8px;color:#cbd5e1">{{ r.comment }}</p>{% endif %}
+<small style="color:var(--muted)">{{ r.created_at[:10] }}</small>
+</div>
+{% endfor %}
+{% endif %}
+
+<script>
+let selectedRating = {{ my_rating.rating if my_rating else 0 }};
+function setRating(n){
+  selectedRating = n;
+  document.querySelectorAll('#stars span').forEach(s=>{
+    const v = parseInt(s.dataset.star);
+    s.style.color = v <= n ? '#fbbf24' : '#444';
+  });
+}
+async function submitRating(){
+  if(selectedRating === 0){ alert('اختر عدد النجوم'); return; }
+  const r = await fetch('/api/seller/rate/{{ seller.id }}', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      rating: selectedRating,
+      comment: document.getElementById('ratingComment').value
+    })
+  });
+  const d = await r.json();
+  document.getElementById('ratingResult').innerHTML = '<span style="color:#22c55e">تم: '+d.msg+'</span>';
+}
+</script>
+{% endblock %}
